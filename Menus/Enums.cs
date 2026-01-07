@@ -10,7 +10,7 @@ namespace Webshop.Menus
     {
         Edit_Products = 1,
         Edit_Categories,
-        Edit_Costumers,
+        Edit_Orders,
         Show_Statistics,
         Go_Back = 8,
         Exit = 9
@@ -18,30 +18,29 @@ namespace Webshop.Menus
 
     public enum EditProducts
     {
-        Edit_Product_Name = 1,
-        Edit_Description,
-        Edit_Price,
-        Edit_Category,
-        Edit_Supplier,
-        Edit_Units_In_Stock,
+        View_Products = 1,
+        Add_Product,
+        Update_Product,
+        Delete_Product,
         Go_Back = 8,
         Exit = 9
     }
 
     public enum EditCategories
     {
-        Edit_Food = 1,
-        Edit_Treats,
-        Edit_Toys,
-        Edit_Accessories,
+        View_Categories = 1,
+        Add_Category,
+        Update_Category,
+        Delete_Category,
         Go_Back = 8,
         Exit = 9
     }
 
-    public enum EditCostumers
+    public enum EditOrders
     {
-        Edit_Information = 1,
-        Edit_Order_History,
+        View_Order_History = 1,
+        Update_Order,
+        Delete_Order,
         Go_Back = 8,
         Exit = 9
     }

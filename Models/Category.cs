@@ -14,5 +14,10 @@ namespace Webshop.Models
 
         //En kategori kan ha många produkter
         public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+
+        public Category(string name)
+        {
+            Name = name;
+        }
     }
 }

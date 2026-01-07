@@ -19,5 +19,21 @@ namespace Webshop.Models
 
         ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 
+        public Order(int id, DateTime orderDate, string customerName, string shipAdress, string shipCountry, string shippingMethod, string paymentMethod, int subTotal)
+        {
+            Id = id;
+            OrderDate = orderDate;
+            CustomerName = customerName;
+            ShipAdress = shipAdress;
+            ShipCountry = shipCountry;
+            ShippingMethod = shippingMethod;
+            PaymentMethod = paymentMethod;
+            SubTotal = subTotal;
+        }
+        public Order()
+        {
+            
+        }
+
     }
 }

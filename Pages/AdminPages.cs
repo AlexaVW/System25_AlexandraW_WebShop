@@ -29,11 +29,10 @@ namespace Webshop.Pages
                             break;
                         case AdminMenu.Edit_Categories:
                             PrintMenuEditCategories();
-                            //Sidan för Edit Categories
                             break;
-                        case AdminMenu.Edit_Costumers:
-                            PrintMenuEditCostumers();
-                            //Sidan för Edit Costumers
+                        case AdminMenu.Edit_Orders:
+                            PrintMenuEditOrders();
+                            //Sidan för Edit Orders
                             break;
                         case AdminMenu.Show_Statistics:
                             //Sidan för Show Statistics.
@@ -66,23 +65,17 @@ namespace Webshop.Pages
                     Console.Clear();
                     switch ((EditProducts)num)
                     {
-                        case EditProducts.Edit_Product_Name:
+                        case EditProducts.View_Products:
                             //Sida för edit product name
                             break;
-                        case EditProducts.Edit_Description:
-                            //Sida för edit desctiption
+                        case EditProducts.Add_Product:
+                            Add.AddProduct();
                             break;
-                        case EditProducts.Edit_Price:
+                        case EditProducts.Update_Product:
                             //Sida för edit price
                             break;
-                        case EditProducts.Edit_Category:
+                        case EditProducts.Delete_Product:
                             //Sida för edit category
-                            break;
-                        case EditProducts.Edit_Supplier:
-                            //Sida för edit supplier
-                            break;
-                        case EditProducts.Edit_Units_In_Stock:
-                            //Sida för edit units in stock
                             break;
                         case EditProducts.Go_Back:
                             isRunning = false;
@@ -111,17 +104,17 @@ namespace Webshop.Pages
                     Console.Clear();
                     switch ((EditCategories)num)
                     {
-                        case EditCategories.Edit_Food:
-                            //Sida för edit food
+                        case EditCategories.View_Categories:
+                            
                             break;
-                        case EditCategories.Edit_Treats:
-                            //Sida för edit treats
+                        case EditCategories.Add_Category:
+                            Add.AddCategory();
                             break;
-                        case EditCategories.Edit_Toys:
-                            //Sida för edit toys
+                        case EditCategories.Update_Category:
+                            
                             break;
-                        case EditCategories.Edit_Accessories:
-                            //Sida för edit Accessories
+                        case EditCategories.Delete_Category:
+                            
                             break;
                         case EditCategories.Go_Back:
                             isRunning = false;
@@ -137,30 +130,32 @@ namespace Webshop.Pages
                 Console.ReadKey();
             }
         }
-        public static void PrintMenuEditCostumers()
+        public static void PrintMenuEditOrders()
         {
             bool isRunning = true;
             while (isRunning)
             {
-                foreach (int i in Enum.GetValues(typeof(EditCostumers)))
+                foreach (int i in Enum.GetValues(typeof(EditOrders)))
                 {
-                    Console.WriteLine(i + ". " + Enum.GetName(typeof(EditCostumers), i).Replace('_', ' '));
+                    Console.WriteLine(i + ". " + Enum.GetName(typeof(EditOrders), i).Replace('_', ' '));
                 }
                 if (int.TryParse(Console.ReadKey(true).KeyChar.ToString(), out int num))
                 {
                     Console.Clear();
-                    switch ((EditCostumers)num)
+                    switch ((EditOrders)num)
                     {
-                        case EditCostumers.Edit_Information:
+                        case EditOrders.View_Order_History:
                             //Sida för edit information
                             break;
-                        case EditCostumers.Edit_Order_History:
+                        case EditOrders.Update_Order:
                             //Sida för edit order history
                             break;
-                        case EditCostumers.Go_Back:
+                        case EditOrders.Delete_Order:
+                            //Sida för delete order
+                        case EditOrders.Go_Back:
                             isRunning = false;
                             break;
-                        case EditCostumers.Exit:
+                        case EditOrders.Exit:
                             Environment.Exit(0);
                             break;
                         default:
