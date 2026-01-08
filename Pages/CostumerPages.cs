@@ -138,7 +138,7 @@ namespace Webshop.Pages
                 switch (key.KeyChar) 
                 {
                     case '1': //Edit amount of product
-                        //Metod för att ändra antal
+                        //Metod för att ändra antal. UPDATE
                         break;
                     case '2': //Delete product
                         //Metod för att ta bort produkt

@@ -13,6 +13,7 @@ namespace Webshop.Models
         public int ProductAmount { get; set; }
         public bool IsPayed { get; set; }
         public int ProductId { get; set; } //FK
+        public Product product { get; set; }
 
         //Ett cart item kan ha en produkt
 

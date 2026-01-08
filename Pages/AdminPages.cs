@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Webshop.Edit;
 using Webshop.Menus;
 
 namespace Webshop.Pages
@@ -25,14 +26,12 @@ namespace Webshop.Pages
                     {
                         case AdminMenu.Edit_Products:
                             PrintMenuEditProducts();
-                            //Sidan för Edit Products
                             break;
                         case AdminMenu.Edit_Categories:
                             PrintMenuEditCategories();
                             break;
                         case AdminMenu.Edit_Orders:
                             PrintMenuEditOrders();
-                            //Sidan för Edit Orders
                             break;
                         case AdminMenu.Show_Statistics:
                             //Sidan för Show Statistics.
@@ -66,16 +65,16 @@ namespace Webshop.Pages
                     switch ((EditProducts)num)
                     {
                         case EditProducts.View_Products:
-                            //Sida för edit product name
+                            Read.ReadProducts();
                             break;
                         case EditProducts.Add_Product:
-                            Add.AddProduct();
+                            Create.CreateProduct();
                             break;
                         case EditProducts.Update_Product:
-                            //Sida för edit price
+                            Update.UpdateProduct();
                             break;
                         case EditProducts.Delete_Product:
-                            //Sida för edit category
+                            Delete.DeleteProduct();
                             break;
                         case EditProducts.Go_Back:
                             isRunning = false;
@@ -105,16 +104,16 @@ namespace Webshop.Pages
                     switch ((EditCategories)num)
                     {
                         case EditCategories.View_Categories:
-                            
+                            Read.ReadCategories();
                             break;
                         case EditCategories.Add_Category:
-                            Add.AddCategory();
+                            Create.CreateCategory();
                             break;
                         case EditCategories.Update_Category:
-                            
+                            Update.UpdateCategory();
                             break;
                         case EditCategories.Delete_Category:
-                            
+                            Delete.DeleteCategory();
                             break;
                         case EditCategories.Go_Back:
                             isRunning = false;
@@ -145,13 +144,13 @@ namespace Webshop.Pages
                     switch ((EditOrders)num)
                     {
                         case EditOrders.View_Order_History:
-                            //Sida för edit information
+                            Read.ReadOrderHistory();
                             break;
                         case EditOrders.Update_Order:
-                            //Sida för edit order history
+                            Update.UpdateOrder();
                             break;
                         case EditOrders.Delete_Order:
-                            //Sida för delete order
+                            //Metod för delete order??
                         case EditOrders.Go_Back:
                             isRunning = false;
                             break;

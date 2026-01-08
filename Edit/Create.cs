@@ -5,18 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using Webshop.Models;
 
-namespace Webshop
+namespace Webshop.Edit
 {
-    internal class Add
+    internal class Create
     {
-        public static void AddCategory()
+        public static void CreateCategory()
         {
             using (var db = new WebShopDbContext())
             {
-                foreach (var category in db.Categories)
-                {
-                    Console.WriteLine(category.Id + "\t" + category.Name);
-                }
+                Console.WriteLine("Categories:");
+                Read.ReadCategories();
                 Console.WriteLine("Enter category name:");
                 string categoryName = Console.ReadLine();
 
@@ -27,22 +25,15 @@ namespace Webshop
             Console.Clear();
         }
 
-        public static void AddProduct() //Lägg till produkt
+        public static void CreateProduct() //Lägg till produkt
         {
             using (var db = new WebShopDbContext())
             {
                 Console.WriteLine("Categories:");
-                foreach (var category in db.Categories)
-                {
-                    Console.WriteLine(category.Id + "\t" + category.Name);
-                }
+                Read.ReadCategories();
                 Console.WriteLine();
                 Console.WriteLine("Products:");
-                foreach (var product in db.Products)
-                {
-                    Console.WriteLine(product.Id + "\t" + product.Name + "\t" + product.PricePerUnit + "\t" + product.UnitsInStock + "\t" +
-                        product.Description + "\t" + product.Supplier + "\t" + product.IsOnSale +"\t" + product.CategoryId);
-                }
+                Read.ReadProducts();
                 Console.WriteLine();
                 Console.WriteLine("Enter product name:");
                 string productName = Console.ReadLine();
@@ -76,6 +67,15 @@ namespace Webshop
             }
             Console.Clear();
 
+        }
+        public static void CreateCartItem() //Skicka in produkten eller produktId. Genom användaren
+        {
+            //Metod för att lägga till cart item. 
+        }
+
+        public static void CreateOrder() //Genom användaren
+        {
+            //Metod för att lägga till order. 
         }
     }
 }
