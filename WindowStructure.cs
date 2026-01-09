@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Webshop.Models;
 using WindowDemo;
 
 namespace Webshop
@@ -29,17 +30,18 @@ namespace Webshop
 
             int offerTopPad = 15;
 
-            List<string> offerText1 = new List<string> { "Nordic Quality Hay", "From Norway", "Price: 399 SEK", "Press [Q] to buy" };
-            var windowTop4 = new Window("Offer", 2, offerTopPad, offerText1);
-            windowTop4.Draw();
+            List <Product> productsOnSale = Helpers.GetProductsOnSale();
 
-            List<string> offerText2 = new List<string> { "Green water bowl", "Impossible to break", "Price: 99 SEK", "Press [W] to buy" };
-            var windowTop5 = new Window("Offer", 35, offerTopPad, offerText2);
-            windowTop5.Draw();
+            int posLeft = 2;
 
-            List<string> offerText3 = new List<string> { "Carrot chewing toy", "Made from dried grass", "Price: 89 SEK", "Press [E] to buy" };
-            var windowTop6 = new Window("Offer", 70, offerTopPad, offerText3);
-            windowTop6.Draw();
+            for (int i = 0; i < productsOnSale.Count; i++)
+            {
+                List<string> text = new List<string> { productsOnSale[i].Name, productsOnSale[i].Description, productsOnSale[i].PricePerUnit.ToString() + " SEK", "Press [Q] to buy" };
+                var productWindow = new Window("Offer", posLeft, offerTopPad, text);
+                productWindow.Draw();
+                posLeft += productsOnSale[i].Description.Length + 4;
+            }
+            
         }
 
         public static void DrawCategoryPage()

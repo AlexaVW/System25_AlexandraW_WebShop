@@ -66,6 +66,9 @@ namespace Webshop.Pages
                     {
                         case EditProducts.View_Products:
                             Read.ReadProducts();
+                            Console.WriteLine();
+                            Console.WriteLine("Product on sale");
+                            Helpers.GetProductsOnSale();
                             break;
                         case EditProducts.Add_Product:
                             Create.CreateProduct();
