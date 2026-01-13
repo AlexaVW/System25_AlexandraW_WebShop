@@ -20,16 +20,16 @@ namespace Webshop.Pages
                 switch (key.KeyChar) 
                 {
                     case '1':
-                        CategoryPage(); 
+                        WindowStructure.DrawCategoryPage(Helpers.GetCategoryProducts(5));
                         break;
                     case '2':
-                        CategoryPage();
+                        WindowStructure.DrawCategoryPage(Helpers.GetCategoryProducts(2));
                         break;
                     case '3':
-                        CategoryPage();
+                        WindowStructure.DrawCategoryPage(Helpers.GetCategoryProducts(3));
                         break;
                     case '4':
-                        CategoryPage();
+                        WindowStructure.DrawCategoryPage(Helpers.GetCategoryProducts(4));
                         break;
                     case '5':
                         SearchPage();
@@ -43,10 +43,9 @@ namespace Webshop.Pages
                 }
             }
         }
-        public static void CategoryPage() //Skicka in lista av produkter
+        public static void CategoryPage() 
         {
             Console.WriteLine("Category Page");
-            WindowStructure.DrawCategoryPage();
             bool isRunning = true;
             while (isRunning)
             {
