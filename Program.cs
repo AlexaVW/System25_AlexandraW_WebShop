@@ -14,25 +14,8 @@ namespace Webshop
             bool isRunning = true;
             while (isRunning)
             {
-                WindowStructure.DrawHomePage();
-                ConsoleKeyInfo key = Console.ReadKey(true);
-                Console.Clear();
-                switch (key.KeyChar)
-                {
-                    case 'a':
-                        Pages.AdminPages.PrintMenuFirstAdminPage();
-                        break;
-                    case '1':
-                        Pages.CostumerPages.ShoppingPage();
-                        break;
-                    case '2':
-                        Pages.CostumerPages.CartPage();
-                        break;
-                    case '9':
-                        Environment.Exit(0);
-                        break;
-
-                }
+                WindowStructure.HomePage();
+                
             }
         }
     }

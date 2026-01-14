@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Webshop.Edit;
 using Webshop.Menus;
 
 namespace Webshop.Pages
@@ -11,25 +12,25 @@ namespace Webshop.Pages
     {
         public static void ShoppingPage()
         {
-            ShoppingPageMenu();
             bool isRunning = true;
             while (isRunning)
             {
+                ShoppingPageMenu();
                 ConsoleKeyInfo key = Console.ReadKey(true);
                 Console.Clear();
                 switch (key.KeyChar) 
                 {
                     case '1':
-                        WindowStructure.DrawCategoryPage(Helpers.GetCategoryProducts(5));
+                        WindowStructure.CategoryPage(Helpers.GetCategoryProducts(5));
                         break;
                     case '2':
-                        WindowStructure.DrawCategoryPage(Helpers.GetCategoryProducts(2));
+                        WindowStructure.CategoryPage(Helpers.GetCategoryProducts(2));
                         break;
                     case '3':
-                        WindowStructure.DrawCategoryPage(Helpers.GetCategoryProducts(3));
+                        WindowStructure.CategoryPage(Helpers.GetCategoryProducts(3));
                         break;
                     case '4':
-                        WindowStructure.DrawCategoryPage(Helpers.GetCategoryProducts(4));
+                        WindowStructure.CategoryPage(Helpers.GetCategoryProducts(4));
                         break;
                     case '5':
                         SearchPage();
@@ -41,68 +42,34 @@ namespace Webshop.Pages
                         Environment.Exit(0);
                         break;
                 }
+                
             }
         }
-        public static void CategoryPage() 
-        {
-            Console.WriteLine("Category Page");
-            bool isRunning = true;
-            while (isRunning)
-            {
-                ConsoleKeyInfo key = Console.ReadKey(true);
-                Console.Clear();
-                switch (key.KeyChar) 
-                {
-                    case '1':
-                        CartPage();
-                        break;
-                    case 'q':
-                        ProductPage();
-                        break;
-                    case 'w':
-                        ProductPage();
-                        break;
-                    case 'e':
-                        ProductPage();
-                        break;
-                    case 'r':
-                        ProductPage();
-                        break;
-                    case 't':
-                        ProductPage();
-                        break;
-                    case '8': // Go back
-                        isRunning = false;
-                        break;
-                    case '9':
-                        Environment.Exit(0);
-                        break;
-                }
-            }
-        }
-        public static void ProductPage() //Skicka in en produkt
-        {
-            Console.WriteLine("Product Page");
-            ProductPageMenu();
-            bool isRunning = true;
-            while (isRunning)
-            {
-                ConsoleKeyInfo key = Console.ReadKey(true);
-                Console.Clear();
-                switch (key.KeyChar) 
-                {
-                    case '1':
-                        CartPage();
-                        break;// Go to home page
-                    case '8': //Go back
-                        isRunning = false;
-                        break;
-                    case '9':
-                        Environment.Exit(0);
-                        break;
-                }
-            }
-        }
+        
+        
+        //public static void ProductPage() //Skicka in en produkt
+        //{
+        //    Console.WriteLine("Product Page");
+        //    ProductPageMenu();
+        //    bool isRunning = true;
+        //    while (isRunning)
+        //    {
+        //        ConsoleKeyInfo key = Console.ReadKey(true);
+        //        Console.Clear();
+        //        switch (key.KeyChar) 
+        //        {
+        //            case '1':
+        //                CartPage();
+        //                break;
+        //            case '8': 
+        //                isRunning = false;
+        //                break;
+        //            case '9':
+        //                Environment.Exit(0);
+        //                break;
+        //        }
+        //    }
+        //}
         public static void SearchPage()
         {
             Console.WriteLine("Search Page");
@@ -127,22 +94,27 @@ namespace Webshop.Pages
         }
         public static void CartPage()
         {
-            Console.WriteLine("Cart page");
-            CartPageMenu();
             bool isRunning = true;
             while (isRunning)
             {
+                Console.WriteLine("Cart page");
+                CartPageMenu();
                 ConsoleKeyInfo key = Console.ReadKey(true);
                 Console.Clear();
                 switch (key.KeyChar) 
                 {
-                    case '1': //Edit amount of product
-                        //Metod för att ändra antal. UPDATE
+                    case '1': //Read CartItem
+                        Read.WriteCartItems();
                         break;
-                    case '2': //Delete product
-                        //Metod för att ta bort produkt
+                    case '2': //Update product
+                        Update.UpdateCartItem();
                         break;
-                    case '3': //Checkout
+                    case '3': //Delete product
+                         Delete.DeleteCartItem();
+                        break;
+                    case '4': //Checkout
+                        //Create Order metod
+                    break;
                         break;
                     case '8': //Go Back
                         isRunning = false;
@@ -204,7 +176,7 @@ namespace Webshop.Pages
             }
             //Töm cart
             //Skickas till hemsidan
-            WindowStructure.DrawHomePage();
+            WindowStructure.HomePage();
         }
         public static void ShoppingPageMenu()
         {
@@ -233,8 +205,9 @@ namespace Webshop.Pages
 
         public static void CartPageMenu()
         {
-            Console.WriteLine("[1] Edit Amount Of Product");
-            Console.WriteLine("[2] Delete Product");
+            Console.WriteLine("[1] Read CartItem");
+            Console.WriteLine("[2] Edit Amount Of Product");
+            Console.WriteLine("[3] Delete Product");
             Console.WriteLine("[8] Go Back");
             Console.WriteLine("[9] Exit");
         }

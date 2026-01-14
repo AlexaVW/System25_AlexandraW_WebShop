@@ -33,7 +33,7 @@ namespace Webshop.Edit
                 Read.ReadCategories();
                 Console.WriteLine();
                 Console.WriteLine("Products:");
-                Read.ReadProducts();
+                Read.GetProductsAsync(new Models.WebShopDbContext());
                 Console.WriteLine();
                 Console.WriteLine("Enter product name:");
                 string productName = Console.ReadLine();
@@ -68,9 +68,25 @@ namespace Webshop.Edit
             Console.Clear();
 
         }
-        public static void CreateCartItem() //Skicka in produkten eller produktId. Genom användaren
+        public static void CreateCartItem(Product product) //Skicka in produkten. Genom användaren
         {
-            //Metod för att lägga till cart item. 
+            using (var db  = new WebShopDbContext())
+            {
+                int productAmount = 1;
+                bool isPayed = false;
+                int productId = product.Id;
+                
+                CartItem newCartItem = new CartItem(productAmount, isPayed, productId);
+                //Kollar om produkten med Id finns i cartitem, annars använd update för ändra ProductAmount
+                db.Cart.Add(newCartItem);
+                db.SaveChanges();
+
+
+                //När man trycker på add to cart ska den produkten läggas till.
+                //IsPayed är alltid false först. Blir true efter betalning
+                //Product amount är alltid 1 först. Ändras i update 
+
+            }
         }
 
         public static void CreateOrder() //Genom användaren

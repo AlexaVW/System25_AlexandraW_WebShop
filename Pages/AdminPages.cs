@@ -50,7 +50,7 @@ namespace Webshop.Pages
                 
             }
         }
-        public static void PrintMenuEditProducts()
+        public static async Task PrintMenuEditProducts()
         {
             bool isRunning = true;
             while (isRunning)
@@ -65,10 +65,8 @@ namespace Webshop.Pages
                     switch ((EditProducts)num)
                     {
                         case EditProducts.View_Products:
-                            Read.ReadProducts();
-                            Console.WriteLine();
-                            Console.WriteLine("Product on sale");
-                            Helpers.GetProductsOnSale();
+                            await Read.GetProductsAsync(new Models.WebShopDbContext());
+                            //Helpers.GetProductsOnSale();
                             break;
                         case EditProducts.Add_Product:
                             Create.CreateProduct();

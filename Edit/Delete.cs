@@ -32,7 +32,7 @@ namespace Webshop.Edit
         {
             using (var db = new WebShopDbContext())
             {
-                Read.ReadProducts(); 
+                Read.GetProductsAsync(new Models.WebShopDbContext()); 
                 Console.WriteLine();
                 Console.WriteLine("Choose Id to delete product");
                 int selectedProduct = int.Parse(Console.ReadLine());
@@ -42,6 +42,24 @@ namespace Webshop.Edit
                 if (deleteProduct != null)
                 {
                     db.Products.Remove(deleteProduct);
+                    db.SaveChanges();
+                }
+            }
+        }
+        public static void DeleteCartItem() //Genom användaren
+        {
+            using (var db = new WebShopDbContext())
+            {
+                Read.WriteCartItems();
+                Console.WriteLine();
+                Console.WriteLine("Choose Id to delete product");
+                int selectedProduct = int.Parse(Console.ReadLine());
+                var deleteProduct = (from c in db.Cart
+                                     where c.Id == selectedProduct
+                                     select c).SingleOrDefault();
+                if (deleteProduct != null)
+                {
+                    db.Cart.Remove(deleteProduct);
                     db.SaveChanges();
                 }
             }

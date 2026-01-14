@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Webshop.Models;
 
 namespace Webshop.Edit
@@ -20,25 +21,24 @@ namespace Webshop.Edit
             }
         }
 
-        public static void ReadProducts()
+        
+
+        public static async Task GetProductsAsync(WebShopDbContext db)
         {
-            using (var db = new WebShopDbContext())
+            foreach (var product in await db.Products.ToListAsync())
             {
-                foreach (var product in db.Products)
-                {
-                    Console.WriteLine(product.Id + "\t" + product.Name + "\t" + product.PricePerUnit + "\t" + product.UnitsInStock + "\t" +
-                        product.Description + "\t" + product.Supplier + "\t" + product.IsOnSale + "\t" + product.CategoryId);
-                }
+                Console.WriteLine(product.Id + "\t" + product.Name + "\t" + product.PricePerUnit + "\t" + product.UnitsInStock + "\t" +
+                    product.Description + "\t" + product.Supplier + "\t" + product.IsOnSale + "\t" + product.CategoryId);
             }
         }
 
-        public static void ReadCartItem()
+        public static void WriteCartItems()
         {
             using (var db = new WebShopDbContext())
             {
-                foreach (var cartItem in db.Cart)
+                foreach (var cartItem in db.Cart.Include(c=> c.product))
                 {
-                    Console.WriteLine(cartItem.Id + "\t" + cartItem.ProductAmount + "\t" + cartItem.IsPayed + "\t" + cartItem.ProductId + "\t" + cartItem.product);
+                    Console.WriteLine("Id: " + cartItem.Id + "\t" + "Amount: " + cartItem.ProductAmount + "\t" + "IsPayed?: " + cartItem.IsPayed + "\t" + "Product Id: " + cartItem.ProductId + "\t" + cartItem.product.Name); //Lägga till namnet på produkten?
                 }
             }
         }

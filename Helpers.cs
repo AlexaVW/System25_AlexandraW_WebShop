@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Webshop.Edit;
 using Webshop.Models;
 
 namespace Webshop
@@ -87,6 +88,22 @@ namespace Webshop
             return value;
         }
 
+        public static void AddProductToCart(List<Product> productsOnSale, string selectedChar)
+        {
+            int selectedProduct = Helpers.GetCharValue(selectedChar); //Får ut t.ex värde Q = 0, W = 1
+
+            //Nytt fönster som endast visar information om vald produkt.
+            if (selectedProduct >= 0 && selectedProduct < productsOnSale.Count)
+            {
+                //Console.WriteLine("Added " + productsOnSale[selectedProduct].Name + " to cart");
+                Create.CreateCartItem(productsOnSale[selectedProduct]);
+            }
+        }
+
         
+
+
+
+
     }
 }
