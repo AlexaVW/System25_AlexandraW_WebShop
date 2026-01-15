@@ -15,19 +15,18 @@ namespace Webshop.Models
         public string ShipCountry { get; set; }
         public string ShippingMethod { get; set; }
         public string PaymentMethod { get; set; }
-        public int SubTotal { get; set; }
+        public double SubTotal { get; set; }
 
         ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 
-        public Order(int id, DateTime orderDate, string customerName, string shipAdress, string shipCountry, string shippingMethod, string paymentMethod, int subTotal)
+        public Order(string customerName, string shipAdress, string shipCountry, string shippingMethod, string paymentMethod, DateTime orderDate, double subTotal)
         {
-            Id = id;
-            OrderDate = orderDate;
             CustomerName = customerName;
             ShipAdress = shipAdress;
             ShipCountry = shipCountry;
             ShippingMethod = shippingMethod;
             PaymentMethod = paymentMethod;
+            OrderDate = orderDate;
             SubTotal = subTotal;
         }
         public Order()

@@ -51,7 +51,11 @@ namespace Webshop
                 DrawCategoryProductsWindows(categoryProducts);
 
                 string key = Console.ReadKey(true).KeyChar.ToString().ToUpper();
-                ShowMoreProductInfo(categoryProducts[Helpers.GetCharValue(key)]);
+                int productIndex = Helpers.GetButtonIndex(key); //Returnerar -1 ifall knappen inte finns som index
+                if (productIndex != -1)
+                {
+                    ShowMoreProductInfo(categoryProducts[Helpers.GetButtonIndex(key)]);
+                }
 
                 Console.Clear();
                 switch (key)
@@ -60,7 +64,7 @@ namespace Webshop
                         CostumerPages.CartPage();
                         break;
                     case "8":
-                        isRunning = false; //Kan ej gå ur loopen
+                        isRunning = false; 
                         break;
                     case "9":
                         Environment.Exit(0);

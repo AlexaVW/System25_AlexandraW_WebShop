@@ -38,7 +38,18 @@ namespace Webshop.Edit
             {
                 foreach (var cartItem in db.Cart.Include(c=> c.product))
                 {
-                    Console.WriteLine("Id: " + cartItem.Id + "\t" + "Amount: " + cartItem.ProductAmount + "\t" + "IsPayed?: " + cartItem.IsPayed + "\t" + "Product Id: " + cartItem.ProductId + "\t" + cartItem.product.Name); //Lägga till namnet på produkten?
+                    Console.WriteLine("Id: " + cartItem.Id + "\t" + "Amount: " + cartItem.ProductAmount + "\t" + "IsPayed?: " + cartItem.IsPayed + "\t" + "Product Id: " + cartItem.ProductId + "\t" + cartItem.product.Name + "\t" + cartItem.product.PricePerUnit); //Lägga till namnet på produkten?
+                }
+            }
+        }
+
+        public static void WriteCartItemsInCheckout()
+        {
+            using (var db = new WebShopDbContext())
+            {
+                foreach (var cartItem in db.Cart.Include(c => c.product))
+                {
+                    Console.WriteLine("Amount: " + cartItem.ProductAmount + "\t"+ cartItem.product.Name + "\t" + cartItem.product.PricePerUnit + " SEK"); 
                 }
             }
         }

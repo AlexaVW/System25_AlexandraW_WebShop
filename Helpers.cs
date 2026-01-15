@@ -21,7 +21,6 @@ namespace Webshop
                                     select s).ToList();
             }
             return productsOnSale;
-
         }
 
         public static List<Product> GetCategoryProducts(int selectedCategoryId) //Hämtar kategorierna med sina produkter i
@@ -49,7 +48,7 @@ namespace Webshop
             return chars;
         }
 
-        public static int GetCharValue(string selectedChar)
+        public static int GetButtonIndex(string selectedChar)
         {
             int value = -1;
             switch (selectedChar.ToUpper())
@@ -90,7 +89,7 @@ namespace Webshop
 
         public static void AddProductToCart(List<Product> productsOnSale, string selectedChar)
         {
-            int selectedProduct = Helpers.GetCharValue(selectedChar); //Får ut t.ex värde Q = 0, W = 1
+            int selectedProduct = Helpers.GetButtonIndex(selectedChar); //Får ut t.ex värde Q = 0, W = 1
 
             //Nytt fönster som endast visar information om vald produkt.
             if (selectedProduct >= 0 && selectedProduct < productsOnSale.Count)
@@ -100,7 +99,30 @@ namespace Webshop
             }
         }
 
-        
+        public static double CalculateTotalPrice()
+        {
+            double totalPrice = 0;
+            using (var db = new WebShopDbContext())
+            {
+                foreach (var cartItem in db.Cart.Include(c => c.product))
+                {
+                    totalPrice += cartItem.product.PricePerUnit * cartItem.ProductAmount;
+                }
+                return totalPrice;
+            }
+        }
+
+        public static double CalculateTax(double price)
+        {
+            double calculatedTax = 0;
+            double tax = 0.25;
+            calculatedTax = price * tax;
+            return calculatedTax;
+        }
+
+
+
+
 
 
 

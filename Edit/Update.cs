@@ -108,37 +108,42 @@ namespace Webshop.Edit
 
         public static void UpdateCartItem()
         {
-            using (var db = new WebShopDbContext())
+            bool isRunning = true;
+            while (isRunning)
             {
-                //Gör till loop?
-                Read.WriteCartItems();
-                
-                Console.WriteLine("Choose Id to change amount of product");
-                int selectedId = int.Parse(Console.ReadLine());
-                var selectedProduct = (from c in db.Cart
-                                        where c.Id == selectedId
-                                        select c).SingleOrDefault();
-                if(selectedProduct != null)
+                using (var db = new WebShopDbContext())
                 {
-                    Console.WriteLine("Increase amount of this product: 1");
-                    Console.WriteLine("Decrease amount of this product: 2");
-                    int increaseOrDecrease = int.Parse(Console.ReadLine());
-                    if (increaseOrDecrease == 1)
+                    Read.WriteCartItems();
+
+                    Console.WriteLine("Choose Id to change amount of product");
+                    int selectedId = int.Parse(Console.ReadLine());
+                    var selectedProduct = (from c in db.Cart
+                                           where c.Id == selectedId
+                                           select c).SingleOrDefault();
+                    if (selectedProduct != null)
                     {
-                        selectedProduct.ProductAmount += 1;
-                        Console.WriteLine("Added 1");
+                        Console.WriteLine("Increase amount of this product: 1");
+                        Console.WriteLine("Decrease amount of this product: 2");
+                        int increaseOrDecrease = int.Parse(Console.ReadLine());
+                        if (increaseOrDecrease == 1)
+                        {
+                            selectedProduct.ProductAmount += 1;
+                            Console.WriteLine("Added 1");
+                        }
+                        else if (increaseOrDecrease == 2)
+                        {
+                            selectedProduct.ProductAmount -= 1;
+                            Console.WriteLine("Removed 1");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Press 1 or 2 to change amount");
+                        }
+                        db.SaveChanges();
+                        Console.Clear();
                     }
-                    else if (increaseOrDecrease == 2)
-                    {
-                        selectedProduct.ProductAmount -= 1;
-                        Console.WriteLine("Removed 1");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Press 1 or 2 to change amount");
-                    }
-                    db.SaveChanges();
                 }
+            
                 
                 
                 
