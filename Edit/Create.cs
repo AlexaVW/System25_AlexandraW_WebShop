@@ -187,7 +187,7 @@ namespace Webshop.Edit
                     db.Orders.Add(newOrder);
                     db.SaveChanges();
                     Console.WriteLine("Your payment is done. Welcome back.");
-                    //if cartItems isPayed - delete cartitems
+                    //if cartItems isPayed - delete cartitems??
                 }
 
             }
