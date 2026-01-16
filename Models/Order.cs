@@ -16,18 +16,19 @@ namespace Webshop.Models
         public string ShippingMethod { get; set; }
         public string PaymentMethod { get; set; }
         public double SubTotal { get; set; }
+        public int CartItemId { get; set; }
 
-        ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
+        public CartItem CartItem { get; set; } //Ett cartitem har en order
 
-        public Order(string customerName, string shipAdress, string shipCountry, string shippingMethod, string paymentMethod, DateTime orderDate, double subTotal)
+        public Order(string customerName, string shipAdress, string shipCountry, string shippingMethod, string paymentMethod, double subTotal, int cartItemId)
         {
             CustomerName = customerName;
             ShipAdress = shipAdress;
             ShipCountry = shipCountry;
             ShippingMethod = shippingMethod;
             PaymentMethod = paymentMethod;
-            OrderDate = orderDate;
             SubTotal = subTotal;
+            CartItemId = cartItemId;
         }
         public Order()
         {

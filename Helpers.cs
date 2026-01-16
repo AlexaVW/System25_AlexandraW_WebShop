@@ -120,6 +120,21 @@ namespace Webshop
             return calculatedTax;
         }
 
+        public static List<CartItem> GetCartItemsNotPayed() //Fixa så produktId inte sparas som IsPayed
+        {
+            List<CartItem> cartItemsNotPayed = new List<CartItem>();
+            using(var db = new WebShopDbContext())
+            {
+                foreach(var cartItem in db.Cart.Include(c => c.product).Where(c => c.IsPayed == false))
+                {
+                    cartItemsNotPayed.Add(cartItem);
+                }
+            }
+            return cartItemsNotPayed;
+        }
+
+        
+
 
 
 

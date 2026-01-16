@@ -151,7 +151,8 @@ namespace Webshop.Pages
                             Update.UpdateOrder();
                             break;
                         case EditOrders.Delete_Order:
-                            //Metod för delete order??
+                            Delete.DeleteOrder();
+                            break;
                         case EditOrders.Go_Back:
                             isRunning = false;
                             break;

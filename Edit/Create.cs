@@ -110,6 +110,8 @@ namespace Webshop.Edit
 
             double subTotal = Helpers.CalculateTotalPrice();
             DateTime orderDate;
+
+            List<CartItem> cartItems = Helpers.GetCartItemsNotPayed();
             
             Console.WriteLine("Checkout Page");
             Console.WriteLine();
@@ -153,46 +155,71 @@ namespace Webshop.Edit
                     paymentMethod = "Klarna";
                 }
 
-                orderDate = DateTime.Now;
+                
                 Read.WriteCartItemsInCheckout();
                 Console.WriteLine();
                 Console.WriteLine("Subtotal: " + subTotal + " SEK");
-
-                Order newOrder = new Order(name, address, country, shippingMethod, paymentMethod, orderDate, subTotal);
+                
+                List <Order> orders = new List<Order>();
+                //Loopa igenom, lägg till en order per cartitem.
+                foreach(CartItem cartItem in cartItems)
+                {
+                    Order newOrder = new Order(name, address, country, shippingMethod, paymentMethod, subTotal, cartItem.Id);
+                    orders.Add(newOrder);
+                }
+                
 
                 Console.WriteLine("Press [0] to continue");
                 int pay = int.Parse(Console.ReadLine());
                 if (pay == 0)
                 {
                     Console.Clear();
-                    PayPage(newOrder);
+
+                    Pay(orders);
                 }
             }
 
         }
-        public static void PayPage(Order newOrder) 
+        
+        public static void Pay(List<Order> orders)
         {
-            
             Console.WriteLine("Pay Page");
             using (var db = new WebShopDbContext())
             {
+                double totalPriceInCart = 0;
+                //Måste plussa på alla ordrar
+                foreach (Order order in orders)
+                {
+                    totalPriceInCart += order.SubTotal;
+                }
+                //Show price
                 Read.WriteCartItemsInCheckout();
-                Console.WriteLine("Tax: " + Helpers.CalculateTax(newOrder.SubTotal) + " SEK");
-                Console.WriteLine("Order date: " + newOrder.OrderDate);
-                Console.WriteLine("Subtotal: " + newOrder.SubTotal);
+                Console.WriteLine("Tax: " + Helpers.CalculateTax(totalPriceInCart) + " SEK");
+                Console.WriteLine("Subtotal: " + totalPriceInCart);
+
                 Console.WriteLine("Press [0] to pay");
                 int pay = int.Parse(Console.ReadLine());
                 if (pay == 0)
                 {
-                    db.Orders.Add(newOrder);
-                    db.SaveChanges();
+                    DateTime orderDate = DateTime.Now; //Blir samma datum för alla ordar eftersom den ligger utanför loopen
+                    foreach (Order order in orders)
+                    {
+                        db.Orders.Add(order);
+                        order.OrderDate = orderDate;
+                        
+                        db.Cart.Where(c => c.IsPayed == false).ToList(); //Fixa så själva produktId inte blir true
+                        foreach(var cart in db.Cart)
+                        {
+                            cart.IsPayed = true;
+                        }
+                        db.SaveChanges();
+                        
+                    }
                     Console.WriteLine("Your payment is done. Welcome back.");
                     //if cartItems isPayed - delete cartitems??
                 }
-
             }
-
-
         }
+        
     }
 }

@@ -64,5 +64,23 @@ namespace Webshop.Edit
                 }
             }
         }
+
+        public static void DeleteOrder() //Lägg till i admin menyn
+        {
+            using(var db = new WebShopDbContext())
+            {
+                Read.ReadOrderHistory();
+                Console.WriteLine("Choose Id to delete order");
+                int selectedOrder = int.Parse(Console.ReadLine());
+                var deleteOrder = (from o in db.Orders
+                                   where o.Id == selectedOrder
+                                   select o).SingleOrDefault();
+                if (deleteOrder != null)
+                {
+                    db.Orders.Remove(deleteOrder);
+                    db.SaveChanges();
+                }
+            }
+        }
     }
 }
