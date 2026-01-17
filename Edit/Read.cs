@@ -51,7 +51,7 @@ namespace Webshop.Edit
         {
             using (var db = new WebShopDbContext())
             {
-                foreach (var cartItem in db.Cart.Include(c => c.product))
+                foreach (var cartItem in db.Cart.Where(c => c.IsPayed == false).Include(c => c.product))
                 {
                     Console.WriteLine("Amount: " + cartItem.ProductAmount + "\t"+ cartItem.product.Name + "\t" + cartItem.product.PricePerUnit + " SEK"); 
                 }

@@ -99,12 +99,12 @@ namespace Webshop
             }
         }
 
-        public static double CalculateTotalPrice()
+        public static double CalculateAllCartItemsPrice()
         {
             double totalPrice = 0;
             using (var db = new WebShopDbContext())
             {
-                foreach (var cartItem in db.Cart.Include(c => c.product))
+                foreach (var cartItem in db.Cart.Where(c => c.IsPayed == false).Include(c => c.product))
                 {
                     totalPrice += cartItem.product.PricePerUnit * cartItem.ProductAmount;
                 }
@@ -120,7 +120,7 @@ namespace Webshop
             return calculatedTax;
         }
 
-        public static List<CartItem> GetCartItemsNotPayed() //Fixa så produktId inte sparas som IsPayed
+        public static List<CartItem> GetCartItemsNotPayed() 
         {
             List<CartItem> cartItemsNotPayed = new List<CartItem>();
             using(var db = new WebShopDbContext())

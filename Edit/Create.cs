@@ -80,7 +80,7 @@ namespace Webshop.Edit
                 
                 CartItem newCartItem = new CartItem(productAmount, isPayed, productId);
                 //Kollar om produkten med Id finns i cartitem, annars använd update för ändra ProductAmount
-                var alreadyInCart = db.Cart.FirstOrDefault(c=> c.ProductId  == productId);
+                var alreadyInCart = db.Cart.Where(c => c.IsPayed == false).Where(c => c.ProductId == productId).SingleOrDefault();
                 if (alreadyInCart != null)
                 {
                     //Om produkten finns - plussa på 1 antal 
@@ -108,10 +108,14 @@ namespace Webshop.Edit
             string shippingMethod = "";
             string paymentMethod = "";
 
-            double subTotal = Helpers.CalculateTotalPrice();
-            DateTime orderDate;
+            int shippingCost = 0;
+
+            //Behåll för att visa upp priset bara
+            double totalCartPrice = Helpers.CalculateAllCartItemsPrice();
+            
 
             List<CartItem> cartItems = Helpers.GetCartItemsNotPayed();
+            
             
             Console.WriteLine("Checkout Page");
             Console.WriteLine();
@@ -134,68 +138,69 @@ namespace Webshop.Edit
                 if( choosenShippingMethod == 1)
                 {
                     shippingMethod = "Express Shipping";
-                    subTotal += 69;
+                    shippingCost = 69;
                 }
                 if( choosenShippingMethod == 2)
                 {
                     shippingMethod = "Basic Shipping";
-                    subTotal += 49;
+                    shippingCost = 49;
                 }
 
                 Console.WriteLine("Choose payment method");
-                Console.WriteLine("[3] Card");
-                Console.WriteLine("[4] Klarna");
+                Console.WriteLine("[1] Card");
+                Console.WriteLine("[2] Klarna");
                 int choosenPaymentMethod = int.Parse(Console.ReadLine());
-                if( choosenPaymentMethod == 3)
+                if( choosenPaymentMethod == 1)
                 {
                     paymentMethod = "Card";
                 }
-                if ( choosenPaymentMethod == 4)
+                if ( choosenPaymentMethod == 2)
                 {
                     paymentMethod = "Klarna";
                 }
 
-                
+                //Visa Cart info
                 Read.WriteCartItemsInCheckout();
                 Console.WriteLine();
-                Console.WriteLine("Subtotal: " + subTotal + " SEK");
+                Console.WriteLine("CartItem price: " + totalCartPrice + " SEK");
+                Console.WriteLine("Shipping: " + shippingCost + " SEK");
+                Console.WriteLine("Subtotal: " + (totalCartPrice + shippingCost) + " SEK");
                 
-                List <Order> orders = new List<Order>();
                 //Loopa igenom, lägg till en order per cartitem.
+                List<Order> orders = new List<Order>();
                 foreach(CartItem cartItem in cartItems)
                 {
-                    Order newOrder = new Order(name, address, country, shippingMethod, paymentMethod, subTotal, cartItem.Id);
+                    double itemPrice = cartItem.product.PricePerUnit * cartItem.ProductAmount;
+
+                    Order newOrder = new Order(name, address, country, shippingMethod, paymentMethod, itemPrice, cartItem.Id);
                     orders.Add(newOrder);
                 }
-                
 
-                Console.WriteLine("Press [0] to continue");
+                Console.WriteLine("Press [1] to continue");
                 int pay = int.Parse(Console.ReadLine());
-                if (pay == 0)
+                if (pay == 1)
                 {
                     Console.Clear();
 
-                    Pay(orders);
+                    Pay(orders, shippingCost);
                 }
             }
 
         }
         
-        public static void Pay(List<Order> orders)
+        public static void Pay(List<Order> orders, int shippingCost)
         {
             Console.WriteLine("Pay Page");
             using (var db = new WebShopDbContext())
             {
-                double totalPriceInCart = 0;
-                //Måste plussa på alla ordrar
-                foreach (Order order in orders)
-                {
-                    totalPriceInCart += order.SubTotal;
-                }
-                //Show price
+                double totalPriceInCart = Helpers.CalculateAllCartItemsPrice();
+                double totalPriceWithShipping = totalPriceInCart + shippingCost;
+
+                //Skriver ut info igen
                 Read.WriteCartItemsInCheckout();
-                Console.WriteLine("Tax: " + Helpers.CalculateTax(totalPriceInCart) + " SEK");
-                Console.WriteLine("Subtotal: " + totalPriceInCart);
+                Console.WriteLine("Shipping cost: " + shippingCost + " SEK"); 
+                Console.WriteLine("Including tax: " + Helpers.CalculateTax(totalPriceWithShipping) + " SEK");
+                Console.WriteLine("Subtotal: " + totalPriceWithShipping + " SEK");
 
                 Console.WriteLine("Press [0] to pay");
                 int pay = int.Parse(Console.ReadLine());
@@ -207,16 +212,22 @@ namespace Webshop.Edit
                         db.Orders.Add(order);
                         order.OrderDate = orderDate;
                         
-                        db.Cart.Where(c => c.IsPayed == false).ToList(); //Fixa så själva produktId inte blir true
-                        foreach(var cart in db.Cart)
+                        var cartItemsToPay = db.Cart.Where(c=> c.IsPayed == false).ToList();
+
+                        foreach(var cartItem in cartItemsToPay)
                         {
-                            cart.IsPayed = true;
+                            cartItem.IsPayed = true;
                         }
                         db.SaveChanges();
-                        
+                        //db.Cart.Where(c => c.IsPayed == false).ToList(); //Fixa så själva produktId inte blir true
+                        //foreach(var cart in db.Cart)
+                        //{
+                        //    cart.IsPayed = true;
+                        //}
+
                     }
                     Console.WriteLine("Your payment is done. Welcome back.");
-                    //if cartItems isPayed - delete cartitems??
+                    //Skickas tillbaks till första sidan
                 }
             }
         }
