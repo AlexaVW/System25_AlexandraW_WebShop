@@ -83,24 +83,27 @@ namespace Webshop.Edit
             {
                 Read.ReadOrderHistory();
                 Console.WriteLine("Enter Id:");
-                int selectedId = int.Parse(Console.ReadLine());
-                var selectedOrder = (from c in db.Orders
-                                            where c.Id == selectedId
-                                            select c).SingleOrDefault();
-                if (selectedOrder != null)
+                string selectedName = Console.ReadLine().ToUpper();
+                var selectedOrders = (from o in db.Orders
+                                            where o.CustomerName == selectedName
+                                            select o).ToList();
+                if (selectedOrders != null)
                 {
                     Console.WriteLine("Enter new costumername:");
                     string newCostumerName = Console.ReadLine();
-                    selectedOrder.CustomerName = newCostumerName;
 
                     Console.WriteLine("Enter new shipping address:");
                     string newShippingAdress = Console.ReadLine();
-                    selectedOrder.ShipAdress = newShippingAdress;
 
                     Console.WriteLine("Enter new country:");
                     string newShippingCountry = Console.ReadLine();
-                    selectedOrder.ShipCountry = newShippingCountry;
-
+                    
+                    foreach(var order in selectedOrders)
+                    {
+                        order.CustomerName = newCostumerName;
+                        order.ShipAdress = newShippingAdress;
+                        order.ShipCountry = newShippingCountry;
+                    }
                     db.SaveChanges();
                 }
             }
@@ -117,7 +120,7 @@ namespace Webshop.Edit
 
                     Console.WriteLine("Choose Id to change amount of product");
                     int selectedId = int.Parse(Console.ReadLine());
-                    var selectedProduct = (from c in db.Cart
+                    var selectedProduct = (from c in db.CartItems
                                            where c.Id == selectedId
                                            select c).SingleOrDefault();
                     if (selectedProduct != null)

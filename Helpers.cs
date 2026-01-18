@@ -104,7 +104,7 @@ namespace Webshop
             double totalPrice = 0;
             using (var db = new WebShopDbContext())
             {
-                foreach (var cartItem in db.Cart.Where(c => c.IsPayed == false).Include(c => c.product))
+                foreach (var cartItem in db.CartItems.Where(c => c.IsPayed == false).Include(c => c.product))
                 {
                     totalPrice += cartItem.product.PricePerUnit * cartItem.ProductAmount;
                 }
@@ -125,7 +125,7 @@ namespace Webshop
             List<CartItem> cartItemsNotPayed = new List<CartItem>();
             using(var db = new WebShopDbContext())
             {
-                foreach(var cartItem in db.Cart.Include(c => c.product).Where(c => c.IsPayed == false))
+                foreach(var cartItem in db.CartItems.Include(c => c.product).Where(c => c.IsPayed == false))
                 {
                     cartItemsNotPayed.Add(cartItem);
                 }

@@ -80,7 +80,7 @@ namespace Webshop.Edit
                 
                 CartItem newCartItem = new CartItem(productAmount, isPayed, productId);
                 //Kollar om produkten med Id finns i cartitem, annars använd update för ändra ProductAmount
-                var alreadyInCart = db.Cart.Where(c => c.IsPayed == false).Where(c => c.ProductId == productId).SingleOrDefault();
+                var alreadyInCart = db.CartItems.Where(c => c.IsPayed == false).Where(c => c.ProductId == productId).SingleOrDefault();
                 if (alreadyInCart != null)
                 {
                     //Om produkten finns - plussa på 1 antal 
@@ -88,7 +88,7 @@ namespace Webshop.Edit
                 }
                 else
                 {
-                    db.Cart.Add(newCartItem);
+                    db.CartItems.Add(newCartItem);
                 }
                 db.SaveChanges();
 
@@ -212,19 +212,13 @@ namespace Webshop.Edit
                         db.Orders.Add(order);
                         order.OrderDate = orderDate;
                         
-                        var cartItemsToPay = db.Cart.Where(c=> c.IsPayed == false).ToList();
+                        var cartItemsToPay = db.CartItems.Where(c=> c.IsPayed == false).ToList();
 
                         foreach(var cartItem in cartItemsToPay)
                         {
                             cartItem.IsPayed = true;
                         }
                         db.SaveChanges();
-                        //db.Cart.Where(c => c.IsPayed == false).ToList(); //Fixa så själva produktId inte blir true
-                        //foreach(var cart in db.Cart)
-                        //{
-                        //    cart.IsPayed = true;
-                        //}
-
                     }
                     Console.WriteLine("Your payment is done. Welcome back.");
                     Console.WriteLine("Press any key");

@@ -54,12 +54,12 @@ namespace Webshop.Edit
                 Console.WriteLine();
                 Console.WriteLine("Choose Id to delete product");
                 int selectedProduct = int.Parse(Console.ReadLine());
-                var deleteProduct = (from c in db.Cart
+                var deleteProduct = (from c in db.CartItems
                                      where c.Id == selectedProduct
                                      select c).SingleOrDefault();
                 if (deleteProduct != null)
                 {
-                    db.Cart.Remove(deleteProduct);
+                    db.CartItems.Remove(deleteProduct);
                     db.SaveChanges();
                 }
             }

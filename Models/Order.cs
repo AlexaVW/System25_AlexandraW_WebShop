@@ -15,7 +15,7 @@ namespace Webshop.Models
         public string ShipCountry { get; set; }
         public string ShippingMethod { get; set; }
         public string PaymentMethod { get; set; }
-        public double SubTotal { get; set; }
+        public double ItemPrice { get; set; }
         public int CartItemId { get; set; }
 
         public CartItem CartItem { get; set; } //Ett cartitem har en order
@@ -27,7 +27,7 @@ namespace Webshop.Models
             ShipCountry = shipCountry;
             ShippingMethod = shippingMethod;
             PaymentMethod = paymentMethod;
-            SubTotal = subTotal;
+            ItemPrice = subTotal;
             CartItemId = cartItemId;
         }
         public Order()

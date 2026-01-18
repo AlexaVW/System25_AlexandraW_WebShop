@@ -52,7 +52,7 @@ namespace Webshop.Edit
         {
             using (var db = new WebShopDbContext())
             {
-                foreach (var cartItem in db.Cart.Where(c => c.IsPayed == false).Include(c => c.product))
+                foreach (var cartItem in db.CartItems.Where(c => c.IsPayed == false).Include(c => c.product))
                 {
                     Console.WriteLine("Amount: " + cartItem.ProductAmount + "\t"+ cartItem.product.Name + "\t" + cartItem.product.PricePerUnit + " SEK"); 
                 }
@@ -89,9 +89,9 @@ namespace Webshop.Edit
 
                         Console.WriteLine("CartItem Id: " + order.CartItemId +
                             "\n" + "Product name: " + order.CartItem.product.Name +
-                            "\n" + "Price: " + order.SubTotal + " SEK");
+                            "\n" + "Price: " + order.ItemPrice + " SEK");
 
-                        subTotal += order.SubTotal;
+                        subTotal += order.ItemPrice;
                     }
                     Console.WriteLine();
                     Console.WriteLine("Total price for products: " + subTotal);

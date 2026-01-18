@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Webshop.Models;
 
@@ -11,9 +12,11 @@ using Webshop.Models;
 namespace Webshop.Migrations
 {
     [DbContext(typeof(WebShopDbContext))]
-    partial class WebShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260118153727_Changed_PropertyName_From_SubTotal_To_ItemPrice")]
+    partial class Changed_PropertyName_From_SubTotal_To_ItemPrice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,7 +46,7 @@ namespace Webshop.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("Cart");
                 });
 
             modelBuilder.Entity("Webshop.Models.Category", b =>
