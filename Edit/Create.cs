@@ -227,6 +227,10 @@ namespace Webshop.Edit
 
                     }
                     Console.WriteLine("Your payment is done. Welcome back.");
+                    Console.WriteLine("Press any key");
+                    Console.ReadKey();
+                    Console.Clear();
+                    WindowStructure.HomePage();
                     //Skickas tillbaks till första sidan
                 }
             }

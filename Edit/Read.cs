@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Webshop.Models;
@@ -64,14 +65,37 @@ namespace Webshop.Edit
         {
             using (var db = new WebShopDbContext())
             {
-                foreach (var order in db.Orders) //gruppera? på datum?
+                var orderDateGroups = db.Orders.Include(o => o.CartItem).ThenInclude(c => c.product).GroupBy(o => o.OrderDate).ToList();
+                //var orderNameGroups = db.Orders.GroupBy(o => o.CustomerName).ToList();
+                
+                foreach (var group in orderDateGroups) 
                 {
-                    //skriv ut över gripande info. Adress namn med mera.
-                    Console.WriteLine(order.Id + "\t" + order.OrderDate + "\t" + order.CustomerName + "\t" + 
-                        order.ShipAdress + "\t" + order.ShipCountry + "\t" + order.ShippingMethod + "\t" + 
-                        order.PaymentMethod + "\t" + order.SubTotal + "\t"); //Få med cartitem id och produktens namn
+                    Console.WriteLine("ORDERDATE: " + group.Key);
+                    double subTotal = 0;
+                    bool firstRow = true;
+                    foreach(var order in group)
+                    {
+                        if(firstRow == true)
+                        {
+                            Console.WriteLine("Id: " + order.Id);
+                            Console.WriteLine("CustomerName: " + order.CustomerName);
+                            Console.WriteLine();
+                            Console.WriteLine("Address: " + order.ShipAdress + 
+                                "\n" + "Country: " + order.ShipCountry + 
+                                "\n" + "Shipping Method: " + order.ShippingMethod + 
+                                "\n" + "Payment method: " + order.PaymentMethod);
+                            firstRow = false;
+                        }
 
-                    //loopa igenom alla produkt namn och pris i ordern
+                        Console.WriteLine("CartItem Id: " + order.CartItemId +
+                            "\n" + "Product name: " + order.CartItem.product.Name +
+                            "\n" + "Price: " + order.SubTotal + " SEK");
+
+                        subTotal += order.SubTotal;
+                    }
+                    Console.WriteLine();
+                    Console.WriteLine("Total price for products: " + subTotal);
+                    Console.WriteLine("----------------------------------");
                 }
             }
         }
