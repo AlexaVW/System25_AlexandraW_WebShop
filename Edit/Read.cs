@@ -59,7 +59,6 @@ namespace Webshop.Edit
             }
         }
 
-        
 
         public static void ReadOrderHistory()
         {

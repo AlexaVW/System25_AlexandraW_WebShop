@@ -33,7 +33,7 @@ namespace Webshop.Pages
                         WindowStructure.CategoryPage(Helpers.GetCategoryProducts(4));
                         break;
                     case '5':
-                        SearchPage();
+                        SearchProductPage();
                         break;
                     case '8':
                         isRunning = false;
@@ -46,27 +46,10 @@ namespace Webshop.Pages
             }
         }
         
-        public static void SearchPage()
+        public static void SearchProductPage()
         {
             Console.WriteLine("Search Page");
-            SearchPageMenu();
-            //Metod för att söka efter produkt
-            
-            bool isRunning = true;
-            while (isRunning)
-            {
-                ConsoleKeyInfo key = Console.ReadKey(true);
-                Console.Clear();
-                switch (key.KeyChar) 
-                {
-                    case '8': // Go back
-                        isRunning = false;
-                        break;
-                    case '9':
-                        Environment.Exit(0);
-                        break;
-                }
-            }
+            SearchPage.SearchProduct();
         }
         public static void CartPage()
         {
@@ -141,11 +124,6 @@ namespace Webshop.Pages
             Console.WriteLine("[9] Exit");
         }
 
-        public static void SearchPageMenu()
-        {
-            Console.WriteLine("[8] Go Back");
-            Console.WriteLine("[9] Exit");
-        }
 
         public static void CartPageMenu()
         {

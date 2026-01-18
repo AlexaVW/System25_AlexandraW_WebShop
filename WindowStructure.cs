@@ -26,7 +26,7 @@ namespace Webshop
             Console.Clear();
             switch (key)
             {
-                case "A":
+                case "0":
                     Pages.AdminPages.PrintMenuFirstAdminPage();
                     break;
                 case "1":
@@ -89,7 +89,7 @@ namespace Webshop
             windowTop1.Draw();
 
             //Skriver ut Adminmenyn
-            List<string> adminMenuText = new List<string> { "[A] Admin Menu" };
+            List<string> adminMenuText = new List<string> { "[0] Admin Menu" };
             var windowsTop2 = new Window("Admin", 2, 5, adminMenuText);
             windowsTop2.Draw();
 

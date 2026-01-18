@@ -104,6 +104,8 @@ namespace Webshop.Edit
                         order.ShipAdress = newShippingAdress;
                         order.ShipCountry = newShippingCountry;
                     }
+                    // Vad händer om man skriver ogiltigt namn?
+
                     db.SaveChanges();
                 }
             }

@@ -43,7 +43,8 @@ namespace Webshop
         {
             List <char> chars = new List<char>() 
             { 
-                'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'
+                'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
+                'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'
             };
             return chars;
         }
@@ -83,6 +84,34 @@ namespace Webshop
                 case "P":
                     value = 9;
                     break;
+                case "A":
+                    value = 10;
+                    break;
+                case "S":
+                    value = 11;
+                    break;
+                case "D":
+                    value = 12;
+                    break;
+                case "F":
+                    value = 13;
+                    break;
+                case "G":
+                    value = 14;
+                    break;
+                case "H":
+                    value = 15;
+                    break;
+                case "J":
+                    value = 16;
+                    break;
+                case "K":
+                    value = 17;
+                    break;
+                case "L":
+                    value = 18;
+                    break;
+
             }
             return value;
         }
@@ -94,8 +123,10 @@ namespace Webshop
             //Nytt fönster som endast visar information om vald produkt.
             if (selectedProduct >= 0 && selectedProduct < productsOnSale.Count)
             {
-                //Console.WriteLine("Added " + productsOnSale[selectedProduct].Name + " to cart");
                 Create.CreateCartItem(productsOnSale[selectedProduct]);
+                Console.WriteLine("Added " + productsOnSale[selectedProduct].Name + " to cart");
+                Console.WriteLine("Press any key to continue");
+                Console.ReadKey(true);
             }
         }
 
