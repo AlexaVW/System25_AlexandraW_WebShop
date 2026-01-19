@@ -34,7 +34,7 @@ namespace Webshop.Pages
                             PrintMenuEditOrders();
                             break;
                         case AdminMenu.Show_Statistics:
-                            //Sidan för Show Statistics.
+                            PrintMenuShowStatistics();
                             break;
                         case AdminMenu.Go_Back:
                             isRunning = false;
@@ -52,43 +52,40 @@ namespace Webshop.Pages
         }
         public static async Task PrintMenuEditProducts()
         {
-            bool isRunning = true;
-            while (isRunning)
+
+            foreach (int i in Enum.GetValues(typeof(EditProducts)))
             {
-                foreach (int i in Enum.GetValues(typeof(EditProducts)))
-                {
-                    Console.WriteLine(i + ". " + Enum.GetName(typeof(EditProducts), i).Replace('_', ' '));
-                }
-                if (int.TryParse(Console.ReadKey(true).KeyChar.ToString(), out int num))
-                {
-                    Console.Clear();
-                    switch ((EditProducts)num)
-                    {
-                        case EditProducts.View_Products:
-                            await Read.GetProductsAsync(new Models.WebShopDbContext());
-                            //Helpers.GetProductsOnSale();
-                            break;
-                        case EditProducts.Add_Product:
-                            Create.CreateProduct();
-                            break;
-                        case EditProducts.Update_Product:
-                            Update.UpdateProduct();
-                            break;
-                        case EditProducts.Delete_Product:
-                            Delete.DeleteProduct();
-                            break;
-                        case EditProducts.Go_Back:
-                            isRunning = false;
-                            break;
-                        case EditProducts.Exit:
-                            Environment.Exit(0);
-                            break;
-                        default:
-                            Console.WriteLine("Skriv in en siffra");
-                            break;
-                    }
-                }   
+                Console.WriteLine(i + ". " + Enum.GetName(typeof(EditProducts), i).Replace('_', ' '));
             }
+            if (int.TryParse(Console.ReadKey(true).KeyChar.ToString(), out int num))
+            {
+                Console.Clear();
+                switch ((EditProducts)num)
+                {
+                    case EditProducts.View_Products:
+                        await Read.GetProductsAsync(new Connections.WebShopDbContext());
+                        break;
+                    case EditProducts.Add_Product:
+                        Create.CreateProduct();
+                        break;
+                    case EditProducts.Update_Product:
+                        Update.UpdateProduct();
+                        break;
+                    case EditProducts.Delete_Product:
+                        Delete.DeleteProduct();
+                        break;
+                    case EditProducts.Go_Back:
+                        //isRunning = false;
+                        break;
+                    case EditProducts.Exit:
+                        Environment.Exit(0);
+                        break;
+                    default:
+                        Console.WriteLine("Skriv in en siffra");
+                        break;
+                }
+            }   
+            
         }
         public static void PrintMenuEditCategories()
         {
@@ -105,7 +102,7 @@ namespace Webshop.Pages
                     switch ((EditCategories)num)
                     {
                         case EditCategories.View_Categories:
-                            Read.ReadCategories();
+                            Read.WriteCategories();
                             break;
                         case EditCategories.Add_Category:
                             Create.CreateCategory();
@@ -168,5 +165,48 @@ namespace Webshop.Pages
             }
         }
 
+        public static void PrintMenuShowStatistics()
+        {
+            bool isRunning = true;
+            while (isRunning)
+            {
+                foreach (int i in Enum.GetValues(typeof(ShowStatistics)))
+                {
+                    Console.WriteLine(i + ". " + Enum.GetName(typeof(ShowStatistics), i).Replace('_', ' '));
+                }
+                if (int.TryParse(Console.ReadKey(true).KeyChar.ToString(), out int num))
+                {
+                    Console.Clear();
+                    switch ((ShowStatistics)num)
+                    {
+                        case ShowStatistics.Show_Best_Selling_Products:
+                            
+                            break;
+                        case ShowStatistics.Show_Most_Popular_Category:
+                            
+                            break;
+                        case ShowStatistics.Show_Most_Popular_Hay:
+                            
+                            break;
+                        case ShowStatistics.Show_Orders_Per_Country:
+
+                            break;
+                        case ShowStatistics.Show_Sales_Sorted_By_Supplier:
+
+                            break;
+                        case ShowStatistics.Go_Back:
+                            isRunning = false;
+                            break;
+                        case ShowStatistics.Exit:
+                            Environment.Exit(0);
+                            break;
+                        default:
+                            Console.WriteLine("Skriv in en siffra");
+                            break;
+                    }
+                }
+                Console.ReadKey();
+            }
+        }
     }
 }

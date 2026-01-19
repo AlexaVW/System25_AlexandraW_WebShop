@@ -11,9 +11,9 @@ namespace Webshop.Edit
     {
         public static void DeleteCategory()
         {
-            using (var db = new WebShopDbContext())
+            using (var db = new Connections.WebShopDbContext())
             {
-                Read.ReadCategories();
+                Read.WriteCategories();
                 Console.WriteLine();
                 Console.WriteLine("Choose Id to delete a category");
                 int selectedCategory = int.Parse(Console.ReadLine());
@@ -30,9 +30,9 @@ namespace Webshop.Edit
         }
         public static void DeleteProduct()
         {
-            using (var db = new WebShopDbContext())
+            using (var db = new Connections.WebShopDbContext())
             {
-                Read.GetProductsAsync(new Models.WebShopDbContext()); 
+                Read.GetProductsAsync(new Connections.WebShopDbContext()); 
                 Console.WriteLine();
                 Console.WriteLine("Choose Id to delete product");
                 int selectedProduct = int.Parse(Console.ReadLine());
@@ -48,7 +48,7 @@ namespace Webshop.Edit
         }
         public static void DeleteCartItem() //Genom användaren
         {
-            using (var db = new WebShopDbContext())
+            using (var db = new Connections.WebShopDbContext())
             {
                 Read.WriteCartItems();
                 Console.WriteLine();
@@ -67,7 +67,7 @@ namespace Webshop.Edit
 
         public static void DeleteOrder() //Lägg till i admin menyn
         {
-            using(var db = new WebShopDbContext())
+            using(var db = new Connections.WebShopDbContext())
             {
                 Read.ReadOrderHistory();
                 Console.WriteLine("Choose Id to delete order");

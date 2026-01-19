@@ -44,4 +44,15 @@ namespace Webshop.Menus
         Go_Back = 8,
         Exit = 9
     }
+
+    public enum ShowStatistics
+    {
+        Show_Best_Selling_Products = 1,
+        Show_Most_Popular_Category,
+        Show_Most_Popular_Hay,
+        Show_Orders_Per_Country,
+        Show_Sales_Sorted_By_Supplier,
+        Go_Back = 8,
+        Exit = 9
+    }
 }

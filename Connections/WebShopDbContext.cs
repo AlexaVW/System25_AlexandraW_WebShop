@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Webshop.Models;
 
-namespace Webshop.Models
+namespace Webshop.Connections
 {
     internal class WebShopDbContext : DbContext
     {

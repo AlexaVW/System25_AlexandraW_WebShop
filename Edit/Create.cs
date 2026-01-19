@@ -13,10 +13,10 @@ namespace Webshop.Edit
     {
         public static void CreateCategory()
         {
-            using (var db = new WebShopDbContext())
+            using (var db = new Connections.WebShopDbContext())
             {
                 Console.WriteLine("Categories:");
-                Read.ReadCategories();
+                Read.WriteCategories();
                 Console.WriteLine("Enter category name:");
                 string categoryName = Console.ReadLine();
 
@@ -27,15 +27,15 @@ namespace Webshop.Edit
             Console.Clear();
         }
 
-        public static void CreateProduct() //Lägg till produkt
+        public static async Task CreateProduct() //Lägg till produkt
         {
-            using (var db = new WebShopDbContext())
+            using (var db = new Connections.WebShopDbContext())
             {
                 Console.WriteLine("Categories:");
-                Read.ReadCategories();
+                Read.WriteCategories();
                 Console.WriteLine();
                 Console.WriteLine("Products:");
-                Read.GetProductsAsync(new Models.WebShopDbContext());
+                await Read.GetProductsAsync(new Connections.WebShopDbContext()); //await - för att Enter product name ska komma sist
                 Console.WriteLine();
                 Console.WriteLine("Enter product name:");
                 string productName = Console.ReadLine();
@@ -72,7 +72,7 @@ namespace Webshop.Edit
         }
         public static void CreateCartItem(Product product) //Skicka in produkten. Genom användaren
         {
-            using (var db  = new WebShopDbContext())
+            using (var db  = new Connections.WebShopDbContext())
             {
                 int productAmount = 1;
                 bool isPayed = false;
@@ -120,7 +120,7 @@ namespace Webshop.Edit
             Console.WriteLine("Checkout Page");
             Console.WriteLine();
             Console.WriteLine("Enter your shipping information");
-            using (var db = new WebShopDbContext())
+            using (var db = new Connections.WebShopDbContext())
             {
                 Console.Write("Name: ");
                 name = Console.ReadLine();
@@ -191,7 +191,7 @@ namespace Webshop.Edit
         public static void Pay(List<Order> orders, int shippingCost)
         {
             Console.WriteLine("Pay Page");
-            using (var db = new WebShopDbContext())
+            using (var db = new Connections.WebShopDbContext())
             {
                 double totalPriceInCart = Helpers.CalculateAllCartItemsPrice();
                 double totalPriceWithShipping = totalPriceInCart + shippingCost;

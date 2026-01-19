@@ -11,9 +11,9 @@ namespace Webshop.Edit
     {
         public static void UpdateCategory()
         {
-            using (var db = new WebShopDbContext())
+            using (var db = new Connections.WebShopDbContext())
             {
-                Read.ReadCategories();
+                Read.WriteCategories();
                 Console.WriteLine("Enter Id:");
                 int selectedId = int.Parse(Console.ReadLine());
                 var selectedCategoryName = (from c in db.Categories
@@ -31,9 +31,9 @@ namespace Webshop.Edit
 
         public static void UpdateProduct()
         {
-            using (var db = new WebShopDbContext())
+            using (var db = new Connections.WebShopDbContext())
             {
-                Read.GetProductsAsync(new Models.WebShopDbContext());
+                Read.GetProductsAsync(new Connections.WebShopDbContext());
                 Console.WriteLine("Enter Id:");
                 int selectedId = int.Parse(Console.ReadLine());
                 var selectedProduct = (from p in db.Products
@@ -79,7 +79,7 @@ namespace Webshop.Edit
         }
         public static void UpdateOrder()
         {
-            using (var db = new WebShopDbContext())
+            using (var db = new Connections.WebShopDbContext())
             {
                 Read.ReadOrderHistory();
                 Console.WriteLine("Enter Id:");
@@ -116,7 +116,7 @@ namespace Webshop.Edit
             bool isRunning = true;
             while (isRunning)
             {
-                using (var db = new WebShopDbContext())
+                using (var db = new Connections.WebShopDbContext())
                 {
                     Read.WriteCartItems();
 

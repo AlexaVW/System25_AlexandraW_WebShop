@@ -5,19 +5,21 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Webshop.Connections;
 using Webshop.Models;
 
 namespace Webshop.Edit
 {
     internal class Read
     {
-        public static void ReadCategories()
+        public static void WriteCategories()
         {
+            int pad = 8;
             using (var db = new WebShopDbContext())
             {
                 foreach (var category in db.Categories)
                 {
-                    Console.WriteLine(category.Id + "\t" + category.Name);
+                    Console.WriteLine(("Id: " + category.Id).PadRight(pad) + " Category name: " + category.Name);
                 }
             }
         }
@@ -26,6 +28,7 @@ namespace Webshop.Edit
 
         public static async Task GetProductsAsync(WebShopDbContext db)
         {
+            
             foreach (var product in await db.Products.ToListAsync())
             {
                 Console.WriteLine(product.Id + "\t" + product.Name + "\t" + product.PricePerUnit + "\t" + product.UnitsInStock + "\t" +
@@ -58,7 +61,6 @@ namespace Webshop.Edit
                 }
             }
         }
-
 
         public static void ReadOrderHistory()
         {

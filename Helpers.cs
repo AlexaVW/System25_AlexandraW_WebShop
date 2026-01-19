@@ -14,7 +14,7 @@ namespace Webshop
         public static List<Product> GetProductsOnSale()
         {
             List<Product> productsOnSale = new List<Product>();
-            using (var db = new WebShopDbContext())
+            using (var db = new Connections.WebShopDbContext())
             {
                 productsOnSale = (from s in db.Products
                                     where s.IsOnSale == true
@@ -25,7 +25,7 @@ namespace Webshop
 
         public static List<Product> GetCategoryProducts(int selectedCategoryId) //Hämtar kategorierna med sina produkter i
         {
-            using (var db = new WebShopDbContext())
+            using (var db = new Connections.WebShopDbContext())
             {
                 var productsInCategory = db.Categories.Include(c => c.Products).Where(c => c.Id == selectedCategoryId).ToList();
                 
@@ -44,7 +44,7 @@ namespace Webshop
             List <char> chars = new List<char>() 
             { 
                 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
-                'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'
+                'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Z', 'X', 'C', 'V', 'B', 'N', 'M'
             };
             return chars;
         }
@@ -111,7 +111,28 @@ namespace Webshop
                 case "L":
                     value = 18;
                     break;
-
+                case "Z":
+                    value = 19;
+                    break;
+                case "X":
+                    value = 20;
+                    break;
+                case "C":
+                    value = 21;
+                    break;
+                case "V":
+                    value = 22;
+                    break;
+                case "B":
+                    value = 23;
+                    break;
+                case "N":
+                    value = 24;
+                    break;
+                case "M":
+                    value = 25;
+                    break;
+                    //Gör så metoderna inte kan krasha ifall det går över
             }
             return value;
         }
@@ -133,7 +154,7 @@ namespace Webshop
         public static double CalculateAllCartItemsPrice()
         {
             double totalPrice = 0;
-            using (var db = new WebShopDbContext())
+            using (var db = new Connections.WebShopDbContext())
             {
                 foreach (var cartItem in db.CartItems.Where(c => c.IsPayed == false).Include(c => c.product))
                 {
@@ -154,7 +175,7 @@ namespace Webshop
         public static List<CartItem> GetCartItemsNotPayed() 
         {
             List<CartItem> cartItemsNotPayed = new List<CartItem>();
-            using(var db = new WebShopDbContext())
+            using(var db = new Connections.WebShopDbContext())
             {
                 foreach(var cartItem in db.CartItems.Include(c => c.product).Where(c => c.IsPayed == false))
                 {
@@ -165,6 +186,8 @@ namespace Webshop
         }
 
         
+
+
 
 
 
