@@ -1,4 +1,5 @@
 ﻿using Webshop.Menus;
+using Webshop.Pages;
 using WindowDemo;
 
 namespace Webshop
@@ -14,6 +15,10 @@ namespace Webshop
             bool isRunning = true;
             while (isRunning)
             {
+                
+
+                
+
                 WindowStructure.HomePage();
                 
             }

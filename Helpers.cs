@@ -185,7 +185,14 @@ namespace Webshop
             return cartItemsNotPayed;
         }
 
-        
+        public static void ShowBestSellingProducts(List<CartItem> cartItems)
+        {
+            foreach (var item in cartItems)
+            {
+                Console.WriteLine("Product: " + item.product.Name + "\n" + "Amount sold: " + item.ProductAmount);
+                Console.WriteLine();
+            }
+        }
 
 
 

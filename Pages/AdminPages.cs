@@ -180,19 +180,16 @@ namespace Webshop.Pages
                     switch ((ShowStatistics)num)
                     {
                         case ShowStatistics.Show_Best_Selling_Products:
-                            
+                            Statistics.PrintBestSellingProducts();
                             break;
                         case ShowStatistics.Show_Most_Popular_Category:
-                            
+                            Statistics.PrintMostPopularCategories();
                             break;
                         case ShowStatistics.Show_Most_Popular_Hay:
-                            
-                            break;
-                        case ShowStatistics.Show_Orders_Per_Country:
-
+                            Statistics.PrintMostPopularHay();
                             break;
                         case ShowStatistics.Show_Sales_Sorted_By_Supplier:
-
+                            Statistics.PrintSalesOrderedBySupplier();
                             break;
                         case ShowStatistics.Go_Back:
                             isRunning = false;
