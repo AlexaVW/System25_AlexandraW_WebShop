@@ -20,14 +20,14 @@ namespace Webshop.Models
 
         public CartItem CartItem { get; set; } //Ett cartitem har en order
 
-        public Order(string customerName, string shipAdress, string shipCountry, string shippingMethod, string paymentMethod, double subTotal, int cartItemId)
+        public Order(string customerName, string shipAdress, string shipCountry, string shippingMethod, string paymentMethod, double itemPrice, int cartItemId)
         {
             CustomerName = customerName;
             ShipAdress = shipAdress;
             ShipCountry = shipCountry;
             ShippingMethod = shippingMethod;
             PaymentMethod = paymentMethod;
-            ItemPrice = subTotal;
+            ItemPrice = itemPrice;
             CartItemId = cartItemId;
         }
         public Order()

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Webshop.Models;
 
 namespace Webshop.Connections
@@ -16,11 +17,24 @@ namespace Webshop.Connections
         public DbSet<Order> Orders { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=.\SQLExpress;Database=WebShop;Trusted_Connection=True;TrustServerCertificate=true");
-            //Skriv WebShop1 vid ny databas
+            var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
+
+            var connStr = config["MySettings:ConnectionString"];
+            optionsBuilder.UseSqlServer(connStr);
+            
         }
 
-        
+       //Gör så man inte kan ta bort kategori med produkter i
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.Category)
+                .WithMany(c => c.Products)
+                .HasForeignKey(p => p.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
+
+
 
 
     }
