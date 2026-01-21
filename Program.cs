@@ -15,10 +15,6 @@ namespace Webshop
             bool isRunning = true;
             while (isRunning)
             {
-                
-
-                
-
                 WindowStructure.HomePage();
                 
             }

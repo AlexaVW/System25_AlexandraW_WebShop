@@ -12,93 +12,83 @@ namespace Webshop.Edit
 {
     internal class Read
     {
-        public static void WriteCategories()
+        public static void ShowCategories(WebShopDbContext db)
         {
-            int pad = 8;
-            using (var db = new WebShopDbContext())
+            Console.WriteLine("Categories");
+            foreach (var category in db.Categories)
             {
-                foreach (var category in db.Categories)
-                {
-                    Console.WriteLine(("Id: " + category.Id).PadRight(pad) + " Category name: " + category.Name);
-                }
+                Console.WriteLine(("Id: " + category.Id).PadRight(8) + " Category name: " + category.Name);
             }
+            Console.WriteLine();
+
         }
 
-        
-
-        public static async Task GetProductsAsync(WebShopDbContext db)
+        public static void ShowProducts(WebShopDbContext db)
         {
-            
-            foreach (var product in await db.Products.ToListAsync())
+            Console.WriteLine("Products");
+            foreach (var product in db.Products.ToList())
             {
-                Console.WriteLine(product.Id + "\t" + product.Name + "\t" + product.PricePerUnit + "\t" + product.UnitsInStock + "\t" +
-                    product.Description + "\t" + product.Supplier + "\t" + product.IsOnSale + "\t" + product.CategoryId);
+                Console.WriteLine("Id: " + product.Id + "\t" + product.Name + "\t" + product.PricePerUnit + " SEK" + "\t" + "In stock: " + product.UnitsInStock + "\t" +
+                    product.Description + "\t" + "Supplier: "+ product.Supplier + "\t" + "On sale: " + product.IsOnSale + "\t" + "Category Id: " + product.CategoryId);
             }
+            Console.WriteLine();
         }
 
-        public static void WriteCartItems()
+        public static void ShowCartItems(WebShopDbContext db)
         {
-            using (var db = new WebShopDbContext())
-            {
-                List <CartItem> cartItems = Helpers.GetCartItemsNotPayed();
+            List<CartItem> cartItems = Helpers.GetCartItemsNotPayed();
 
-                foreach (var cartItem in cartItems)
-                {
-                    Console.WriteLine("Id: " + cartItem.Id + "\t" + "Amount: " + cartItem.ProductAmount + 
-                        "\t" + "IsPayed?: " + cartItem.IsPayed + "\t" + "Product Id: " + cartItem.ProductId + 
-                        "\t" + cartItem.product.Name + "\t" + cartItem.product.PricePerUnit); 
-                }
+            foreach (var cartItem in cartItems)
+            {
+                Console.WriteLine("Id: " + cartItem.Id + "\t" + "Amount: " + cartItem.ProductAmount +
+                    "\t" + "IsPayed?: " + cartItem.IsPayed + "\t" + "Product Id: " + cartItem.ProductId +
+                    "\t" + cartItem.product.Name + "\t" + cartItem.product.PricePerUnit);
             }
+            Console.WriteLine();
         }
 
-        public static void WriteCartItemsInCheckout()
+        public static void ShowCartItemsInCheckout(WebShopDbContext db)
         {
-            using (var db = new WebShopDbContext())
+            foreach (var cartItem in db.CartItems.Where(c => c.IsPayed == false).Include(c => c.product))
             {
-                foreach (var cartItem in db.CartItems.Where(c => c.IsPayed == false).Include(c => c.product))
-                {
-                    Console.WriteLine("Amount: " + cartItem.ProductAmount + "\t"+ cartItem.product.Name + "\t" + cartItem.product.PricePerUnit + " SEK"); 
-                }
+                Console.WriteLine("Amount: " + cartItem.ProductAmount + "\t" + cartItem.product.Name + "\t" + cartItem.product.PricePerUnit + " SEK");
             }
+            Console.WriteLine();
         }
 
-        public static void ReadOrderHistory()
+        public static void ShowOrderHistory(WebShopDbContext db)
         {
-            using (var db = new WebShopDbContext())
+            var orderDateGroups = db.Orders.Include(o => o.CartItem).ThenInclude(c => c.product).GroupBy(o => o.OrderDate).ToList();
+
+            foreach (var group in orderDateGroups)
             {
-                var orderDateGroups = db.Orders.Include(o => o.CartItem).ThenInclude(c => c.product).GroupBy(o => o.OrderDate).ToList();
-                //var orderNameGroups = db.Orders.GroupBy(o => o.CustomerName).ToList();
-                
-                foreach (var group in orderDateGroups) 
+                Console.WriteLine("ORDERDATE: " + group.Key);
+                double subTotal = group.Sum(g => g.ItemPrice);
+                bool firstRow = true;
+                foreach (var order in group)
                 {
-                    Console.WriteLine("ORDERDATE: " + group.Key);
-                    double subTotal = 0;
-                    bool firstRow = true;
-                    foreach(var order in group)
+                    if (firstRow == true)
                     {
-                        if(firstRow == true)
-                        {
-                            Console.WriteLine("Id: " + order.Id);
-                            Console.WriteLine("CustomerName: " + order.CustomerName);
-                            Console.WriteLine();
-                            Console.WriteLine("Address: " + order.ShipAdress + 
-                                "\n" + "Country: " + order.ShipCountry + 
-                                "\n" + "Shipping Method: " + order.ShippingMethod + 
-                                "\n" + "Payment method: " + order.PaymentMethod);
-                            firstRow = false;
-                        }
-
-                        Console.WriteLine("CartItem Id: " + order.CartItemId +
-                            "\n" + "Product name: " + order.CartItem.product.Name +
-                            "\n" + "Price: " + order.ItemPrice + " SEK");
-
-                        subTotal += order.ItemPrice;
+                        Console.WriteLine("CustomerName: " + order.CustomerName);
+                        Console.WriteLine();
+                        Console.WriteLine("Address: " + order.ShipAdress +
+                            "\n" + "Country: " + order.ShipCountry +
+                            "\n" + "Shipping Method: " + order.ShippingMethod +
+                            "\n" + "Payment method: " + order.PaymentMethod);
+                        firstRow = false;
                     }
-                    Console.WriteLine();
-                    Console.WriteLine("Total price for products: " + subTotal);
-                    Console.WriteLine("----------------------------------");
+
+                    Console.WriteLine("CartItem Id: " + order.CartItemId +
+                        "\n" + "Product name: " + order.CartItem.product.Name + " " + order.CartItem.ProductAmount + "x" +
+                        "\n" + "Price: " + order.ItemPrice + " SEK");
+
+                    //subTotal += order.ItemPrice;
                 }
+                Console.WriteLine();
+                Console.WriteLine("Total price for products: " + subTotal);
+                Console.WriteLine("----------------------------------");
             }
+
         }
 
     }

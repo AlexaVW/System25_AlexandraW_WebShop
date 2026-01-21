@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,17 +53,16 @@ namespace Webshop
 
                 string key = Console.ReadKey(true).KeyChar.ToString().ToUpper();
                 int productIndex = Helpers.GetButtonIndex(key); //Returnerar -1 ifall knappen inte finns som index
+                
                 if (productIndex != -1)
                 {
+                    Console.Clear();
                     ShowMoreProductInfo(categoryProducts[Helpers.GetButtonIndex(key)]);
                 }
 
                 Console.Clear();
                 switch (key)
                 {
-                    case "1":
-                        CostumerPages.CartPage();
-                        break;
                     case "8":
                         isRunning = false; 
                         break;
@@ -136,7 +136,7 @@ namespace Webshop
         public static void DrawCategoryPageMenu(List<Product> productsInCategory)
         {
             //Skriver ut menyn
-            List<string> menuText = new List<string> { "[1] Go To Cart", "[8] Go Back", "[9] Exit" };
+            List<string> menuText = new List<string> { "[8] Go Back", "[9] Exit" };
             var windowsTop = new Window("", 1, 1, menuText);
             windowsTop.Draw();
 
@@ -176,7 +176,6 @@ namespace Webshop
 
         public static void ShowMoreProductInfo(Product product) 
         {
-            Console.Clear();
             Console.WriteLine(product.Name);
             Console.WriteLine(product.PricePerUnit + " SEK");
             Console.WriteLine(product.Description);

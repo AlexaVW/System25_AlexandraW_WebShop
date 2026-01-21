@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Webshop.Edit;
 using Webshop.Menus;
+using Webshop.Connections;
 
 namespace Webshop.Pages
 {
@@ -33,7 +34,7 @@ namespace Webshop.Pages
                         WindowStructure.CategoryPage(Helpers.GetCategoryProducts(4));
                         break;
                     case '5':
-                        SearchProductPage();
+                        SearchPage.SearchProduct();
                         break;
                     case '8':
                         isRunning = false;
@@ -42,15 +43,11 @@ namespace Webshop.Pages
                         Environment.Exit(0);
                         break;
                 }
-                
+                Console.Clear();
+
             }
         }
         
-        public static void SearchProductPage()
-        {
-            Console.WriteLine("Search Page");
-            SearchPage.SearchProduct();
-        }
         public static void CartPage()
         {
             bool isRunning = true;
@@ -63,16 +60,18 @@ namespace Webshop.Pages
                 switch (key.KeyChar) 
                 {
                     case '1': //Read CartItem
-                        Read.WriteCartItems();
+                        Read.ShowCartItems(new WebShopDbContext());
+                        Console.ReadKey();
                         break;
                     case '2': //Update product
                         Update.UpdateCartItem();
+                        Console.ReadKey();
                         break;
                     case '3': //Delete product
                          Delete.DeleteCartItem();
                         break;
                     case '4': //Checkout
-                        CheckoutPage();
+                        Create.CreateOrder();
                         break;
                     case '8': //Go Back
                         isRunning = false;
@@ -81,27 +80,7 @@ namespace Webshop.Pages
                         Environment.Exit(0);
                         break;
                 }
-            }
-        }
-        public static void CheckoutPage()
-        {
-            CheckoutAndPayMenu();
-            Create.CreateOrder();
-
-            bool isRunning = true;
-            while (isRunning)
-            {
-                ConsoleKeyInfo key = Console.ReadKey(true);
                 Console.Clear();
-                switch (key.KeyChar) //ToDo: Fixa så man kan skriva stor/liten bokstav
-                {
-                    case '8': 
-                        isRunning = false;
-                        break;
-                    case '9':
-                        Environment.Exit(0);
-                        break;
-                }
             }
         }
         
@@ -117,13 +96,6 @@ namespace Webshop.Pages
             Console.WriteLine("[9] Exit");
         }
         
-        public static void ProductPageMenu()
-        {
-            Console.WriteLine("[1] Go To Cart");
-            Console.WriteLine("[8] Go Back");
-            Console.WriteLine("[9] Exit");
-        }
-
 
         public static void CartPageMenu()
         {
@@ -134,11 +106,7 @@ namespace Webshop.Pages
             Console.WriteLine("[8] Go Back");
             Console.WriteLine("[9] Exit");
         }
-        public static void CheckoutAndPayMenu()
-        {
-            Console.WriteLine("[8] Go Back");
-            Console.WriteLine("[9] Exit");
-        }
+        
 
     }
 }

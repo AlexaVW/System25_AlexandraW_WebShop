@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Identity.Client;
 using Webshop.Models;
+using Webshop.Connections;
 
 namespace Webshop.Edit
 {
@@ -13,62 +14,78 @@ namespace Webshop.Edit
     {
         public static void CreateCategory()
         {
-            using (var db = new Connections.WebShopDbContext())
+            using (var db = new WebShopDbContext())
             {
-                Console.WriteLine("Categories:");
-                Read.WriteCategories();
-                Console.WriteLine("Enter category name:");
+                Read.ShowCategories(db);
+                Console.WriteLine("Add a new category \n");
+                Console.Write("Enter category name: ");
                 string categoryName = Console.ReadLine();
-
                 Category newCategory = new Category(categoryName);
-                db.Categories.Add(newCategory);
-                db.SaveChanges();
-            }
-            Console.Clear();
-        }
-
-        public static async Task CreateProduct() //Lägg till produkt
-        {
-            using (var db = new Connections.WebShopDbContext())
-            {
-                Console.WriteLine("Categories:");
-                Read.WriteCategories();
-                Console.WriteLine();
-                Console.WriteLine("Products:");
-                await Read.GetProductsAsync(new Connections.WebShopDbContext()); //await - för att Enter product name ska komma sist
-                Console.WriteLine();
-                Console.WriteLine("Enter product name:");
-                string productName = Console.ReadLine();
-
-                Console.WriteLine("Enter price for the product:");
-                double pricePerUnit = double.Parse(Console.ReadLine());
-
-                Console.WriteLine("Enter number of units in stock:");
-                int unitsInStock = int.Parse(Console.ReadLine());
-
-                Console.WriteLine("Enter a description:");
-                string description = Console.ReadLine();
-
-                Console.WriteLine("Enter the name of the supplier:");
-                string supplier = Console.ReadLine();
-
-                Console.WriteLine("Is the product on sale? 1 = Yes. 0 = No");
-                bool isOnSale = false;
-                int onSale = int.Parse(Console.ReadLine());
-                if (onSale == 1)
+                if (!string.IsNullOrWhiteSpace(categoryName))
                 {
-                    isOnSale = true;
+                    try
+                    {
+                        db.Categories.Add(newCategory);
+                        db.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Ops... Something went wrong");
+                        Console.WriteLine(ex.Message);
+                    }
                 }
-
-                Console.WriteLine("Enter the categoryId: ");
-                int categoryId = int.Parse(Console.ReadLine());
-
-                Product newProduct = new Product(productName, pricePerUnit, unitsInStock, description, supplier, isOnSale, categoryId);
-                db.Products.Add(newProduct);
-                db.SaveChanges();
+                else
+                {
+                    Console.WriteLine("Invalid name");
+                    Console.ReadKey();
+                }
             }
-            Console.Clear();
+        }
+        public static void CreateProduct() 
+        {
+            using (var db = new WebShopDbContext())
+            {
+                Read.ShowCategories(db);
+                Read.ShowProducts(db);
+                Console.WriteLine("Add a new product \n");
+                try
+                {
+                    Console.Write("Enter product name: ");
+                    string productName = Console.ReadLine();
 
+                    Console.Write("Enter product price: ");
+                    double pricePerUnit = double.Parse(Console.ReadLine());
+
+                    Console.Write("Enter number of units in stock: ");
+                    int unitsInStock = int.Parse(Console.ReadLine());
+
+                    Console.Write("Enter a description: ");
+                    string description = Console.ReadLine();
+
+                    Console.Write("Enter the name of the supplier: ");
+                    string supplier = Console.ReadLine();
+
+                    Console.Write("Is the product on sale? 1 = Yes. | 2 = No: ");
+                    bool isOnSale = false;
+                    int onSale = int.Parse(Console.ReadLine());
+                    if (onSale == 1)
+                    {
+                        isOnSale = true;
+                    }
+                    Console.Write("Enter the categoryId: ");
+                    int categoryId = int.Parse(Console.ReadLine());
+
+                    Product newProduct = new Product(productName, pricePerUnit, unitsInStock, description, supplier, isOnSale, categoryId);
+
+                    db.Products.Add(newProduct);
+                    db.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Ops... Something went wrong");
+                    Console.WriteLine(ex.Message);
+                }
+            }
         }
         public static void CreateCartItem(Product product) //Skicka in produkten. Genom användaren
         {
@@ -81,21 +98,24 @@ namespace Webshop.Edit
                 CartItem newCartItem = new CartItem(productAmount, isPayed, productId);
                 //Kollar om produkten med Id finns i cartitem, annars använd update för ändra ProductAmount
                 var alreadyInCart = db.CartItems.Where(c => c.IsPayed == false).Where(c => c.ProductId == productId).SingleOrDefault();
-                if (alreadyInCart != null)
+                try
                 {
-                    //Om produkten finns - plussa på 1 antal 
-                    alreadyInCart.ProductAmount += 1;
+                    if (alreadyInCart != null)
+                    {
+                        //Om produkten finns - plussa på 1 antal 
+                        alreadyInCart.ProductAmount += 1;
+                    }
+                    else
+                    {
+                        db.CartItems.Add(newCartItem);
+                    }
+                    db.SaveChanges();
                 }
-                else
+                catch(Exception ex)
                 {
-                    db.CartItems.Add(newCartItem);
+                    Console.WriteLine("Ops... Something went wrong");
+                    Console.WriteLine(ex.Message);
                 }
-                db.SaveChanges();
-
-                //När man trycker på add to cart ska den produkten läggas till.
-                //IsPayed är alltid false först. Blir true efter betalning
-                //Product amount är alltid 1 först. Ändras i update 
-
             }
         }
 
@@ -112,10 +132,8 @@ namespace Webshop.Edit
 
             //Behåll för att visa upp priset bara
             double totalCartPrice = Helpers.CalculateAllCartItemsPrice();
-            
 
             List<CartItem> cartItems = Helpers.GetCartItemsNotPayed();
-            
             
             Console.WriteLine("Checkout Page");
             Console.WriteLine();
@@ -160,8 +178,7 @@ namespace Webshop.Edit
                 }
 
                 //Visa Cart info
-                Read.WriteCartItemsInCheckout();
-                Console.WriteLine();
+                Read.ShowCartItemsInCheckout(db);
                 Console.WriteLine("CartItem price: " + totalCartPrice + " SEK");
                 Console.WriteLine("Shipping: " + shippingCost + " SEK");
                 Console.WriteLine("Subtotal: " + (totalCartPrice + shippingCost) + " SEK");
@@ -185,7 +202,6 @@ namespace Webshop.Edit
                     Pay(orders, shippingCost);
                 }
             }
-
         }
         
         public static void Pay(List<Order> orders, int shippingCost)
@@ -197,35 +213,42 @@ namespace Webshop.Edit
                 double totalPriceWithShipping = totalPriceInCart + shippingCost;
 
                 //Skriver ut info igen
-                Read.WriteCartItemsInCheckout();
+                Read.ShowCartItemsInCheckout(db);
                 Console.WriteLine("Shipping cost: " + shippingCost + " SEK"); 
                 Console.WriteLine("Including tax: " + Helpers.CalculateTax(totalPriceWithShipping) + " SEK");
                 Console.WriteLine("Subtotal: " + totalPriceWithShipping + " SEK");
 
-                Console.WriteLine("Press [0] to pay");
+                Console.WriteLine("Press [1] to pay");
                 int pay = int.Parse(Console.ReadLine());
-                if (pay == 0)
+                if (pay == 1)
                 {
                     DateTime orderDate = DateTime.Now; //Blir samma datum för alla ordar eftersom den ligger utanför loopen
                     foreach (Order order in orders)
                     {
-                        db.Orders.Add(order);
-                        order.OrderDate = orderDate;
-                        
-                        var cartItemsToPay = db.CartItems.Where(c=> c.IsPayed == false).ToList();
-
-                        foreach(var cartItem in cartItemsToPay)
+                        try
                         {
-                            cartItem.IsPayed = true;
+                            db.Orders.Add(order);
+                            order.OrderDate = orderDate;
+
+                            var cartItemsToPay = db.CartItems.Where(c => c.IsPayed == false).ToList();
+
+                            foreach (var cartItem in cartItemsToPay)
+                            {
+                                cartItem.IsPayed = true;
+                            }
+                            db.SaveChanges();
                         }
-                        db.SaveChanges();
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Ops... Something went wrong");
+                            Console.WriteLine(ex.Message);
+                        }
                     }
                     Console.WriteLine("Your payment is done. Welcome back.");
                     Console.WriteLine("Press any key");
                     Console.ReadKey();
                     Console.Clear();
                     WindowStructure.HomePage();
-                    //Skickas tillbaks till första sidan
                 }
             }
         }

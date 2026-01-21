@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Webshop.Models;
+using Webshop.Connections;
 
 namespace Webshop.Edit
 {
@@ -11,9 +12,9 @@ namespace Webshop.Edit
     {
         public static void UpdateCategory()
         {
-            using (var db = new Connections.WebShopDbContext())
+            using (var db = new WebShopDbContext())
             {
-                Read.WriteCategories();
+                Read.ShowCategories(db);
                 Console.WriteLine("Enter Id:");
                 int selectedId = int.Parse(Console.ReadLine());
                 var selectedCategoryName = (from c in db.Categories
@@ -21,47 +22,55 @@ namespace Webshop.Edit
                                          select c).SingleOrDefault();
                 if(selectedCategoryName != null)
                 {
-                    Console.Write("Update categoryname: ");
+                    Console.Write("Update category name: ");
                     var newCategoryName = Console.ReadLine();
                     selectedCategoryName.Name = newCategoryName;
-                    db.SaveChanges();
+                    try
+                    {
+                        db.SaveChanges();
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine("Ops... Something went wrong");
+                        Console.WriteLine(ex.Message);
+                    }
                 }
             }
         }
 
         public static void UpdateProduct()
         {
-            using (var db = new Connections.WebShopDbContext())
+            using (var db = new WebShopDbContext())
             {
-                Read.GetProductsAsync(new Connections.WebShopDbContext());
-                Console.WriteLine("Enter Id:");
+                Read.ShowProducts(db);
+                Console.Write("Enter Id: ");
                 int selectedId = int.Parse(Console.ReadLine());
                 var selectedProduct = (from p in db.Products
                                     where p.Id == selectedId
                                     select p).SingleOrDefault();
                 if(selectedProduct != null)
                 {
-                    Console.WriteLine("Enter product name:");
+                    Console.Write("Enter product name: ");
                     string newProductName = Console.ReadLine();
                     selectedProduct.Name = newProductName;
 
-                    Console.WriteLine("Enter price for the product:");
+                    Console.Write("Enter price for the product: ");
                     double newPricePerUnit = double.Parse(Console.ReadLine());
                     selectedProduct.PricePerUnit = newPricePerUnit;
 
-                    Console.WriteLine("Enter number of units in stock:");
+                    Console.Write("Enter number of units in stock: ");
                     int newUnitsInStock = int.Parse(Console.ReadLine());
                     selectedProduct.UnitsInStock = newUnitsInStock;
 
-                    Console.WriteLine("Enter a description:");
+                    Console.Write("Enter a description: ");
                     string newDescription = Console.ReadLine();
                     selectedProduct.Description = newDescription;
 
-                    Console.WriteLine("Enter the name of the supplier:");
+                    Console.Write("Enter the name of the supplier: ");
                     string newSupplier = Console.ReadLine();
                     selectedProduct.Supplier = newSupplier;
 
-                    Console.WriteLine("Is the product on sale? 1 = Yes. 0 = No");
+                    Console.Write("Is the product on sale? 1 = Yes. 2 = No: ");
                     bool newIsOnSale = false;
                     int onSale = int.Parse(Console.ReadLine());
                     if (onSale == 1)
@@ -70,19 +79,28 @@ namespace Webshop.Edit
                     }
                     selectedProduct.IsOnSale = newIsOnSale;
 
-                    Console.WriteLine("Enter the categoryId: ");
+                    Console.Write("Enter the categoryId: ");
                     int newCategoryId = int.Parse(Console.ReadLine());
                     selectedProduct.CategoryId = newCategoryId;
-                    db.SaveChanges();
+                    try
+                    {
+                        db.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Ops... Something went wrong");
+                        Console.WriteLine(ex.Message);
+                    }
+
                 }
             }
         }
-        public static void UpdateOrder()
+        public static void UpdateCustomerInformation()
         {
-            using (var db = new Connections.WebShopDbContext())
+            using (var db = new WebShopDbContext())
             {
-                Read.ReadOrderHistory();
-                Console.WriteLine("Enter Id:");
+                Read.ShowOrderHistory(db);
+                Console.WriteLine("Enter Name:");
                 string selectedName = Console.ReadLine().ToUpper();
                 var selectedOrders = (from o in db.Orders
                                             where o.CustomerName == selectedName
@@ -104,22 +122,27 @@ namespace Webshop.Edit
                         order.ShipAdress = newShippingAdress;
                         order.ShipCountry = newShippingCountry;
                     }
-                    // Vad händer om man skriver ogiltigt namn?
-
-                    db.SaveChanges();
+                    try
+                    {
+                        db.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Ops... Something went wrong");
+                        Console.WriteLine(ex.Message);
+                    }
                 }
             }
         }
 
         public static void UpdateCartItem()
         {
-            bool isRunning = true;
-            while (isRunning)
+            using (var db = new WebShopDbContext())
             {
-                using (var db = new Connections.WebShopDbContext())
-                {
-                    Read.WriteCartItems();
+                Read.ShowCartItems(db);
 
+                try
+                {
                     Console.WriteLine("Choose Id to change amount of product");
                     int selectedId = int.Parse(Console.ReadLine());
                     var selectedProduct = (from c in db.CartItems
@@ -127,35 +150,35 @@ namespace Webshop.Edit
                                            select c).SingleOrDefault();
                     if (selectedProduct != null)
                     {
-                        Console.WriteLine("Increase amount of this product: 1");
-                        Console.WriteLine("Decrease amount of this product: 2");
+                        Console.WriteLine("Press [1] to Increase amount of this product");
+                        Console.WriteLine("Press [2] to Decrease amount of this product");
                         int increaseOrDecrease = int.Parse(Console.ReadLine());
                         if (increaseOrDecrease == 1)
                         {
-                            selectedProduct.ProductAmount += 1;
-                            Console.WriteLine("Added 1");
+                            Console.Write("Amount to Increase: ");
+                            int numberToIncrease = int.Parse(Console.ReadLine());
+                            selectedProduct.ProductAmount += numberToIncrease;
                         }
                         else if (increaseOrDecrease == 2)
                         {
-                            selectedProduct.ProductAmount -= 1;
-                            Console.WriteLine("Removed 1");
+                            Console.Write("Amount to Decrease: ");
+                            int numberToDecrease = int.Parse(Console.ReadLine());
+                            selectedProduct.ProductAmount -= numberToDecrease;
                         }
                         else
                         {
-                            Console.WriteLine("Press 1 or 2 to change amount");
+                            Console.WriteLine("Press 1 or 2 to change amount"); //Skrivs aldrig ut
                         }
                         db.SaveChanges();
-                        Console.Clear();
                     }
                 }
-            
-                
-                
-                
-
-                
-
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Ops... Something went wrong");
+                    Console.WriteLine(ex.Message);
+                }
             }
         }
+        
     }
 }

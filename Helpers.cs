@@ -16,9 +16,7 @@ namespace Webshop
             List<Product> productsOnSale = new List<Product>();
             using (var db = new Connections.WebShopDbContext())
             {
-                productsOnSale = (from s in db.Products
-                                    where s.IsOnSale == true
-                                    select s).ToList();
+                productsOnSale = db.Products.Where(p=> p.IsOnSale == true).ToList();
             }
             return productsOnSale;
         }

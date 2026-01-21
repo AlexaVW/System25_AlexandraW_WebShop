@@ -13,6 +13,7 @@ namespace Webshop.Pages
     {
         public static void SearchProduct()
         {
+            Console.WriteLine("Search Page");
             var productsSearch = Connections.Dapper.SearchProduct();
             Console.WriteLine();
             for (int i = 0; i < productsSearch.Count; i++)
@@ -27,10 +28,10 @@ namespace Webshop.Pages
                     Console.WriteLine();
                 }
             }
-                string key = Console.ReadKey(true).KeyChar.ToString().ToUpper();
-                Helpers.AddProductToCart(productsSearch, key);
-                Console.Clear();
-            
+            string key = Console.ReadKey(true).KeyChar.ToString().ToUpper();
+            Helpers.AddProductToCart(productsSearch, key);
+            Console.Clear();
+
         }
     }
 }

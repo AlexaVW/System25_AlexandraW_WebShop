@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Webshop.Edit;
 using Webshop.Menus;
+using Webshop.Connections;
 
 namespace Webshop.Pages
 {
@@ -50,42 +51,48 @@ namespace Webshop.Pages
                 
             }
         }
-        public static async Task PrintMenuEditProducts()
+        public static void PrintMenuEditProducts()
         {
-
-            foreach (int i in Enum.GetValues(typeof(EditProducts)))
+            bool isRunning = true;
+            while (isRunning)
             {
-                Console.WriteLine(i + ". " + Enum.GetName(typeof(EditProducts), i).Replace('_', ' '));
-            }
-            if (int.TryParse(Console.ReadKey(true).KeyChar.ToString(), out int num))
-            {
-                Console.Clear();
-                switch ((EditProducts)num)
+                foreach (int i in Enum.GetValues(typeof(EditProducts)))
                 {
-                    case EditProducts.View_Products:
-                        await Read.GetProductsAsync(new Connections.WebShopDbContext());
-                        break;
-                    case EditProducts.Add_Product:
-                        Create.CreateProduct();
-                        break;
-                    case EditProducts.Update_Product:
-                        Update.UpdateProduct();
-                        break;
-                    case EditProducts.Delete_Product:
-                        Delete.DeleteProduct();
-                        break;
-                    case EditProducts.Go_Back:
-                        //isRunning = false;
-                        break;
-                    case EditProducts.Exit:
-                        Environment.Exit(0);
-                        break;
-                    default:
-                        Console.WriteLine("Skriv in en siffra");
-                        break;
+                    Console.WriteLine(i + ". " + Enum.GetName(typeof(EditProducts), i).Replace('_', ' '));
                 }
-            }   
-            
+                if (int.TryParse(Console.ReadKey(true).KeyChar.ToString(), out int num))
+                {
+                    Console.Clear();
+                    switch ((EditProducts)num)
+                    {
+                        case EditProducts.View_Products:
+                            Read.ShowProducts(new WebShopDbContext());
+                            Console.ReadKey();
+                            break;
+                        case EditProducts.Add_Product:
+                            Create.CreateProduct();
+                            break;
+                        case EditProducts.Update_Product:
+                            Update.UpdateProduct();
+                            break;
+                        case EditProducts.Delete_Product:
+                            Delete.DeleteProduct();
+                            break;
+                        case EditProducts.Go_Back:
+                            isRunning = false;
+                            break;
+                        case EditProducts.Exit:
+                            Environment.Exit(0);
+                            break;
+                        default:
+                            Console.WriteLine("Skriv in en siffra");
+                            break;
+                    }
+                }
+                Console.Clear();
+            }
+
+
         }
         public static void PrintMenuEditCategories()
         {
@@ -102,7 +109,8 @@ namespace Webshop.Pages
                     switch ((EditCategories)num)
                     {
                         case EditCategories.View_Categories:
-                            Read.WriteCategories();
+                            Read.ShowCategories(new WebShopDbContext());
+                            Console.ReadKey();
                             break;
                         case EditCategories.Add_Category:
                             Create.CreateCategory();
@@ -124,7 +132,7 @@ namespace Webshop.Pages
                             break;
                     }
                 }
-                Console.ReadKey();
+                Console.Clear();
             }
         }
         public static void PrintMenuEditOrders()
@@ -142,10 +150,11 @@ namespace Webshop.Pages
                     switch ((EditOrders)num)
                     {
                         case EditOrders.View_Order_History:
-                            Read.ReadOrderHistory();
+                            Read.ShowOrderHistory(new WebShopDbContext());
+                            Console.ReadKey();
                             break;
                         case EditOrders.Update_Order:
-                            Update.UpdateOrder();
+                            Update.UpdateCustomerInformation();
                             break;
                         case EditOrders.Delete_Order:
                             Delete.DeleteOrder();
@@ -161,7 +170,7 @@ namespace Webshop.Pages
                             break;
                     }
                 }
-                Console.ReadKey();
+                Console.Clear();
             }
         }
 
@@ -202,7 +211,7 @@ namespace Webshop.Pages
                             break;
                     }
                 }
-                Console.ReadKey();
+                Console.Clear();
             }
         }
     }
