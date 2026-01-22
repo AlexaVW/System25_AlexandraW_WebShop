@@ -20,24 +20,16 @@ namespace Webshop.Edit
                 Console.WriteLine("Add a new category \n");
                 Console.Write("Enter category name: ");
                 string categoryName = Console.ReadLine();
-                Category newCategory = new Category(categoryName);
-                if (!string.IsNullOrWhiteSpace(categoryName))
+                try
                 {
-                    try
-                    {
-                        db.Categories.Add(newCategory);
-                        db.SaveChanges();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Ops... Something went wrong");
-                        Console.WriteLine(ex.Message);
-                    }
+                    Category newCategory = new Category(categoryName);
+                    db.Categories.Add(newCategory);
+                    db.SaveChanges();
                 }
-                else
+                catch (Exception ex)
                 {
-                    Console.WriteLine("Invalid name");
-                    Console.ReadKey();
+                    Console.WriteLine("Ops... Something went wrong");
+                    Console.WriteLine(ex.Message);
                 }
             }
         }
@@ -48,35 +40,35 @@ namespace Webshop.Edit
                 Read.ShowCategories(db);
                 Read.ShowProducts(db);
                 Console.WriteLine("Add a new product \n");
+
+                Console.Write("Enter product name: ");
+                string productName = Console.ReadLine();
+
+                Console.Write("Enter product price: ");
+                double pricePerUnit = double.Parse(Console.ReadLine());
+
+                Console.Write("Enter number of units in stock: ");
+                int unitsInStock = int.Parse(Console.ReadLine());
+
+                Console.Write("Enter a description: ");
+                string description = Console.ReadLine();
+
+                Console.Write("Enter the name of the supplier: ");
+                string supplier = Console.ReadLine();
+
+                Console.Write("Is the product on sale? 1 = Yes. | 2 = No: ");
+                bool isOnSale = false;
+                int onSale = int.Parse(Console.ReadLine());
+                if (onSale == 1)
+                {
+                    isOnSale = true;
+                }
+                Console.Write("Enter the categoryId: ");
+                int categoryId = int.Parse(Console.ReadLine());
+                
                 try
                 {
-                    Console.Write("Enter product name: ");
-                    string productName = Console.ReadLine();
-
-                    Console.Write("Enter product price: ");
-                    double pricePerUnit = double.Parse(Console.ReadLine());
-
-                    Console.Write("Enter number of units in stock: ");
-                    int unitsInStock = int.Parse(Console.ReadLine());
-
-                    Console.Write("Enter a description: ");
-                    string description = Console.ReadLine();
-
-                    Console.Write("Enter the name of the supplier: ");
-                    string supplier = Console.ReadLine();
-
-                    Console.Write("Is the product on sale? 1 = Yes. | 2 = No: ");
-                    bool isOnSale = false;
-                    int onSale = int.Parse(Console.ReadLine());
-                    if (onSale == 1)
-                    {
-                        isOnSale = true;
-                    }
-                    Console.Write("Enter the categoryId: ");
-                    int categoryId = int.Parse(Console.ReadLine());
-
                     Product newProduct = new Product(productName, pricePerUnit, unitsInStock, description, supplier, isOnSale, categoryId);
-
                     db.Products.Add(newProduct);
                     db.SaveChanges();
                 }
@@ -87,6 +79,7 @@ namespace Webshop.Edit
                 }
             }
         }
+        
         public static void CreateCartItem(Product product) //Skicka in produkten. Genom användaren
         {
             using (var db  = new Connections.WebShopDbContext())

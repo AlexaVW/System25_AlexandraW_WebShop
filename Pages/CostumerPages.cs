@@ -63,11 +63,10 @@ namespace Webshop.Pages
                         Read.ShowCartItems();
                         Console.ReadKey();
                         break;
-                    case '2': //Update product
+                    case '2': //Update amount of cart item
                         Update.UpdateCartItem();
-                        Console.ReadKey();
                         break;
-                    case '3': //Delete product
+                    case '3': //Delete cart item
                          Delete.DeleteCartItem();
                         break;
                     case '4': //Checkout

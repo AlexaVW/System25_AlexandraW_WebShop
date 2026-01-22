@@ -16,24 +16,29 @@ namespace Webshop.Edit
             {
                 Read.ShowCategories(db);
                 Console.Write("Choose Id to delete a category: ");
-                int selectedCategory = int.Parse(Console.ReadLine());
-                var deleteCategory = (from c in db.Categories
-                                     where c.Id == selectedCategory
-                                     select c).SingleOrDefault();
-                if (deleteCategory != null)
+                int selectedId;
+                bool validInput = int.TryParse(Console.ReadLine(), out selectedId);
+                var selectedCategory = (from c in db.Categories
+                                     where c.Id == selectedId
+                                      select c).SingleOrDefault();
+                DeleteSelectedCategory(selectedCategory, db);
+            }
+        }
+        public static void DeleteSelectedCategory(Category category, WebShopDbContext db)
+        {
+            if (category != null)
+            {
+                try
                 {
-                    try
-                    {
-                        db.Categories.Remove(deleteCategory);
-                        db.SaveChanges();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("You can't delete this category, it contains products");
-                        Console.WriteLine();
-                        Console.WriteLine(ex.Message);
-                        
-                    }
+                    db.Categories.Remove(category);
+                    db.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("You can't delete this category, it contains products");
+                    Console.WriteLine();
+                    Console.WriteLine(ex.Message);
+
                 }
             }
         }
@@ -43,47 +48,57 @@ namespace Webshop.Edit
             {
                 Read.ShowProducts(db); 
                 Console.Write("Choose Id to delete product: ");
-                int selectedProduct = int.Parse(Console.ReadLine());
-                var deleteProduct = (from p in db.Products
-                                     where p.Id == selectedProduct
+                int selectedId;
+                bool validInput = int.TryParse(Console.ReadLine(), out selectedId);
+                var selectedProduct = (from p in db.Products
+                                     where p.Id == selectedId
                                      select p).SingleOrDefault();
-                if (deleteProduct != null)
+                DeleteSelectedProduct(selectedProduct, db);
+            }
+        }
+        public static void DeleteSelectedProduct(Product product, WebShopDbContext db)
+        {
+            if (product != null)
+            {
+                try
                 {
-                    try
-                    {
-                        db.Products.Remove(deleteProduct);
-                        db.SaveChanges();
-                    }
-                    catch(Exception ex)
-                    {
-                        Console.WriteLine("Ops... Something went wrong");
-                        Console.WriteLine(ex.Message);
-                    }
+                    db.Products.Remove(product);
+                    db.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Ops... Something went wrong");
+                    Console.WriteLine(ex.Message);
                 }
             }
         }
-        public static void DeleteCartItem() //Genom användaren
+        public static void DeleteCartItem() 
         {
             using (var db = new WebShopDbContext())
             {
                 Read.ShowCartItems();
                 Console.Write("Choose Id to remove product from cart: ");
-                int selectedProduct = int.Parse(Console.ReadLine());
-                var deleteProduct = (from c in db.CartItems
-                                     where c.Id == selectedProduct
-                                     select c).SingleOrDefault();
-                if (deleteProduct != null)
+                int selectedId;
+                bool validInput = int.TryParse(Console.ReadLine(), out selectedId);
+                var selectedCartItem = (from ci in db.CartItems
+                                       where ci.Id == selectedId
+                                       select ci).SingleOrDefault();
+                DeleteSelectedCartItem(selectedCartItem, db);
+            }
+        }
+        public static void DeleteSelectedCartItem(CartItem cartItem, WebShopDbContext db)
+        {
+            if (cartItem != null)
+            {
+                try
                 {
-                    try
-                    {
-                        db.CartItems.Remove(deleteProduct);
-                        db.SaveChanges();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Ops... Something went wrong");
-                        Console.WriteLine(ex.Message);
-                    }
+                    db.CartItems.Remove(cartItem);
+                    db.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Ops... Something went wrong");
+                    Console.WriteLine(ex.Message);
                 }
             }
         }
@@ -93,23 +108,27 @@ namespace Webshop.Edit
             using(var db = new WebShopDbContext())
             {
                 Read.ShowOrderHistory(db);
-                Console.WriteLine("Choose Id to delete order");
-                int selectedOrder = int.Parse(Console.ReadLine());
-                var deleteOrder = (from o in db.Orders
-                                   where o.Id == selectedOrder
-                                   select o).SingleOrDefault();
-                if (deleteOrder != null)
+                Console.Write("Enter Name to delete order: ");
+                string selectedName = Console.ReadLine().ToUpper();
+                var selectedOrder = (from o in db.Orders
+                                   where o.CustomerName == selectedName
+                                     select o).FirstOrDefault();
+                DeleteSelectedOrder(selectedOrder, db);
+            }
+        }
+        public static void DeleteSelectedOrder(Order order, WebShopDbContext db)
+        {
+            if (order != null)
+            {
+                try
                 {
-                    try
-                    {
-                        db.Orders.Remove(deleteOrder);
-                        db.SaveChanges();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Ops... Something went wrong");
-                        Console.WriteLine(ex.Message);
-                    }
+                    db.Orders.Remove(order);
+                    db.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Ops... Something went wrong");
+                    Console.WriteLine(ex.Message);
                 }
             }
         }
