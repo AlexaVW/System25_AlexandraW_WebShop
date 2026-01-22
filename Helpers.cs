@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
+using Microsoft.IdentityModel.Tokens;
+using Webshop.Connections;
 using Webshop.Edit;
 using Webshop.Models;
 
@@ -192,14 +196,6 @@ namespace Webshop
             }
         }
 
-
-
-
-
-
-
-
-
-
+        
     }
 }

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Webshop.Models;
+using Microsoft.IdentityModel.Tokens;
 using Webshop.Connections;
+using Webshop.Models;
 
 namespace Webshop.Edit
 {
@@ -44,46 +45,43 @@ namespace Webshop.Edit
             {
                 Read.ShowProducts(db);
                 Console.Write("Enter Id: ");
-                int selectedId = int.Parse(Console.ReadLine());
+                int selectedId;
+                bool validIdInput = int.TryParse(Console.ReadLine(), out selectedId);
+                
                 var selectedProduct = (from p in db.Products
-                                    where p.Id == selectedId
-                                    select p).SingleOrDefault();
-                if(selectedProduct != null)
+                                       where p.Id == selectedId
+                                       select p).SingleOrDefault();
+                UpdateProductName(selectedProduct, db);
+
+                UpdateProductPrice(selectedProduct, db);
+
+                UpdateUnitsInStock(selectedProduct, db);
+
+                UpdateDescription(selectedProduct, db);
+
+                UpdateDescription(selectedProduct, db);
+
+                UpdateOnSale(selectedProduct, db);
+
+                UpdateCategoryId(selectedProduct, db);
+            }
+        }
+
+        public static void UpdateProductName(Product product, WebShopDbContext db)
+        {
+            if (product != null)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Press Enter to not change this column");
+                Console.Write("Enter product name: ");
+
+                string newProductName = Console.ReadLine();
+
+                if (!string.IsNullOrEmpty(newProductName))
                 {
-                    Console.Write("Enter product name: ");
-                    string newProductName = Console.ReadLine();
-                    selectedProduct.Name = newProductName;
-
-                    Console.Write("Enter price for the product: ");
-                    double newPricePerUnit = double.Parse(Console.ReadLine());
-                    selectedProduct.PricePerUnit = newPricePerUnit;
-
-                    Console.Write("Enter number of units in stock: ");
-                    int newUnitsInStock = int.Parse(Console.ReadLine());
-                    selectedProduct.UnitsInStock = newUnitsInStock;
-
-                    Console.Write("Enter a description: ");
-                    string newDescription = Console.ReadLine();
-                    selectedProduct.Description = newDescription;
-
-                    Console.Write("Enter the name of the supplier: ");
-                    string newSupplier = Console.ReadLine();
-                    selectedProduct.Supplier = newSupplier;
-
-                    Console.Write("Is the product on sale? 1 = Yes. 2 = No: ");
-                    bool newIsOnSale = false;
-                    int onSale = int.Parse(Console.ReadLine());
-                    if (onSale == 1)
-                    {
-                        newIsOnSale = true;
-                    }
-                    selectedProduct.IsOnSale = newIsOnSale;
-
-                    Console.Write("Enter the categoryId: ");
-                    int newCategoryId = int.Parse(Console.ReadLine());
-                    selectedProduct.CategoryId = newCategoryId;
                     try
                     {
+                        product.Name = newProductName;
                         db.SaveChanges();
                     }
                     catch (Exception ex)
@@ -91,10 +89,176 @@ namespace Webshop.Edit
                         Console.WriteLine("Ops... Something went wrong");
                         Console.WriteLine(ex.Message);
                     }
+                }
+            }
 
+        }
+
+        public static void UpdateProductPrice(Product product, WebShopDbContext db)
+        {
+            if (product != null)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Press Enter to not change this column");
+                Console.Write("Enter price for the product: ");
+
+                bool validInput = double.TryParse(Console.ReadLine(), out double newPricePerUnit) && newPricePerUnit > 0;
+
+                if (validInput)
+                {
+                    try
+                    {
+                        product.PricePerUnit = newPricePerUnit;
+                        db.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Ops... Something went wrong");
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Invalid price");
+                    Console.WriteLine("Nothing is changed");
                 }
             }
         }
+        public static void UpdateUnitsInStock(Product product, WebShopDbContext db)
+        {
+            if (product != null)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Press Enter to not change this column");
+                Console.Write("Enter number of units in stock: ");
+
+                bool validInput = int.TryParse(Console.ReadLine(), out int newUnitsInStock) && newUnitsInStock > 0;
+                if (validInput)
+                {
+                    try
+                    {
+                        product.UnitsInStock = newUnitsInStock;
+                        db.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Ops... Something went wrong");
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+
+        public static void UpdateDescription(Product product, WebShopDbContext db)
+        {
+            if (product != null)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Press Enter to not change this column");
+                Console.Write("Enter a description: ");
+                string newDescription = Console.ReadLine();
+
+                if (!string.IsNullOrEmpty(newDescription))
+                {
+                    try
+                    {
+                        product.Name = newDescription;
+                        db.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Ops... Something went wrong");
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+
+        }
+        public static void UpdateSupplier(Product product, WebShopDbContext db)
+        {
+
+            if (product != null)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Press Enter to not change this column");
+                Console.Write("Enter the name of the supplier: ");
+                string newSupplier = Console.ReadLine();
+
+                if (!string.IsNullOrEmpty(newSupplier))
+                {
+                    try
+                    {
+                        product.Name = newSupplier;
+                        db.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Ops... Something went wrong");
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+
+        }
+
+        public static void UpdateOnSale(Product product, WebShopDbContext db)
+        {
+            if (product != null)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Press Enter to not change this column");
+                Console.Write("Is the product on sale? 1 = Yes. 2 = No: ");
+
+                bool newIsOnSale = false;
+                string onSaleString = Console.ReadLine();
+                if (!string.IsNullOrEmpty(onSaleString))
+                {
+                    int onSale = int.Parse(onSaleString);
+                    if (onSale == 1)
+                    {
+                        newIsOnSale = true;
+                        try
+                        {
+                            product.IsOnSale = newIsOnSale;
+                            db.SaveChanges();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Ops... Something went wrong");
+                            Console.WriteLine(ex.Message);
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void UpdateCategoryId(Product product, WebShopDbContext db)
+        {
+            if (product != null)
+            {
+                Console.WriteLine();
+                Read.ShowCategories(db);
+                Console.WriteLine("Press Enter to not change this column");
+                Console.Write("Enter the categoryId: ");
+
+                bool validInput = int.TryParse(Console.ReadLine(), out int newCategoryId) && newCategoryId > 0;
+                if (validInput)
+                {
+                    try
+                    {
+                        product.CategoryId = newCategoryId;
+                        db.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Ops... Something went wrong");
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+        }
+
+
         public static void UpdateCustomerInformation()
         {
             using (var db = new WebShopDbContext())
@@ -139,7 +303,7 @@ namespace Webshop.Edit
         {
             using (var db = new WebShopDbContext())
             {
-                Read.ShowCartItems(db);
+                Read.ShowCartItems();
 
                 try
                 {

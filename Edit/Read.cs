@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -25,33 +26,70 @@ namespace Webshop.Edit
 
         public static void ShowProducts(WebShopDbContext db)
         {
+            int idLength = db.Products.Max(p => p.Id.ToString().Length) + 2;
+            int nameLength = db.Products.Max(p => p.Name.Length) + 2;
+            int priceLength = db.Products.Max(p => p.PricePerUnit.ToString().Length) + 2;
+            int stockLength = db.Products.Max(p => p.UnitsInStock.ToString().Length) + 3;
+            int descriptionLength = db.Products.Max(p => p.Description.Length) + 3;
+            int supplierLength = db.Products.Max(p => p.Supplier.Length) + 2;
+            int onSaleLength = db.Products.Max(p => p.IsOnSale.ToString().Length) + 2;
+            
+            
             Console.WriteLine("Products");
             foreach (var product in db.Products.ToList())
             {
-                Console.WriteLine("Id: " + product.Id + "\t" + product.Name + "\t" + product.PricePerUnit + " SEK" + "\t" + "In stock: " + product.UnitsInStock + "\t" +
-                    product.Description + "\t" + "Supplier: "+ product.Supplier + "\t" + "On sale: " + product.IsOnSale + "\t" + "Category Id: " + product.CategoryId);
+                Console.WriteLine("Id: " + product.Id.ToString().PadRight(idLength)
+                    + product.Name.PadRight(nameLength)
+                    + "Price: " + product.PricePerUnit.ToString().PadRight(priceLength)
+                    + "In stock: " + product.UnitsInStock.ToString().PadRight(stockLength) 
+                    + product.Description.PadRight(descriptionLength)
+                    + "Supplier: "+ product.Supplier.PadRight(supplierLength)
+                    + "On sale: " + product.IsOnSale.ToString().PadRight(onSaleLength) 
+                    + "Category Id: " + product.CategoryId);
             }
             Console.WriteLine();
         }
 
-        public static void ShowCartItems(WebShopDbContext db)
+        public static void ShowCartItems()
         {
             List<CartItem> cartItems = Helpers.GetCartItemsNotPayed();
+            try
+            {
+                int idLength = cartItems.Max(ci => ci.Id.ToString().Length) + 2;
+                int amountLength = cartItems.Max(ci => ci.ProductAmount.ToString().Length) + 2;
+                int isPayedLength = cartItems.Max(ci => ci.IsPayed.ToString().Length) + 2;
+                int productIdLength = cartItems.Max(ci => ci.ProductId.ToString().Length) + 2;
+                int productNameLength = cartItems.Max(ci => ci.product.Name.Length) + 2;
+
+                foreach (var cartItem in cartItems)
+                {
+                    Console.WriteLine("Id: " + cartItem.Id.ToString().PadRight(idLength)
+                        + "Amount: " + cartItem.ProductAmount.ToString().PadRight(amountLength)
+                        + "IsPayed?: " + cartItem.IsPayed.ToString().PadRight(isPayedLength)
+                        + "Product Id: " + cartItem.ProductId.ToString().PadRight(productIdLength)
+                        + cartItem.product.Name.PadRight(productNameLength)
+                        + "Price per unit: " + cartItem.product.PricePerUnit + " SEK");
+                }
+                Console.WriteLine();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("No item found");
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        public static void ShowCartItemsInCheckout()
+        {
+            List<CartItem> cartItems = Helpers.GetCartItemsNotPayed();
+            int amountLength = cartItems.Max(ci => ci.ProductAmount.ToString().Length) + 2;
+            int productNameLength = cartItems.Max(ci => ci.product.Name.Length) + 2;
 
             foreach (var cartItem in cartItems)
             {
-                Console.WriteLine("Id: " + cartItem.Id + "\t" + "Amount: " + cartItem.ProductAmount +
-                    "\t" + "IsPayed?: " + cartItem.IsPayed + "\t" + "Product Id: " + cartItem.ProductId +
-                    "\t" + cartItem.product.Name + "\t" + cartItem.product.PricePerUnit);
-            }
-            Console.WriteLine();
-        }
-
-        public static void ShowCartItemsInCheckout(WebShopDbContext db)
-        {
-            foreach (var cartItem in db.CartItems.Where(c => c.IsPayed == false).Include(c => c.product))
-            {
-                Console.WriteLine("Amount: " + cartItem.ProductAmount + "\t" + cartItem.product.Name + "\t" + cartItem.product.PricePerUnit + " SEK");
+                Console.WriteLine("Amount: " + cartItem.ProductAmount.ToString().PadRight(amountLength) 
+                    + cartItem.product.Name.PadRight(productNameLength) 
+                    + cartItem.product.PricePerUnit + " SEK");
             }
             Console.WriteLine();
         }
@@ -59,7 +97,7 @@ namespace Webshop.Edit
         public static void ShowOrderHistory(WebShopDbContext db)
         {
             var orderDateGroups = db.Orders.Include(o => o.CartItem).ThenInclude(c => c.product).GroupBy(o => o.OrderDate).ToList();
-
+            
             foreach (var group in orderDateGroups)
             {
                 Console.WriteLine("ORDERDATE: " + group.Key);
@@ -77,12 +115,10 @@ namespace Webshop.Edit
                             "\n" + "Payment method: " + order.PaymentMethod);
                         firstRow = false;
                     }
-
                     Console.WriteLine("CartItem Id: " + order.CartItemId +
                         "\n" + "Product name: " + order.CartItem.product.Name + " " + order.CartItem.ProductAmount + "x" +
                         "\n" + "Price: " + order.ItemPrice + " SEK");
 
-                    //subTotal += order.ItemPrice;
                 }
                 Console.WriteLine();
                 Console.WriteLine("Total price for products: " + subTotal);

@@ -60,7 +60,7 @@ namespace Webshop.Pages
                 switch (key.KeyChar) 
                 {
                     case '1': //Read CartItem
-                        Read.ShowCartItems(new WebShopDbContext());
+                        Read.ShowCartItems();
                         Console.ReadKey();
                         break;
                     case '2': //Update product

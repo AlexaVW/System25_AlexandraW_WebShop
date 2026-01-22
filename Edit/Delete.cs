@@ -66,7 +66,7 @@ namespace Webshop.Edit
         {
             using (var db = new WebShopDbContext())
             {
-                Read.ShowCartItems(db);
+                Read.ShowCartItems();
                 Console.Write("Choose Id to remove product from cart: ");
                 int selectedProduct = int.Parse(Console.ReadLine());
                 var deleteProduct = (from c in db.CartItems

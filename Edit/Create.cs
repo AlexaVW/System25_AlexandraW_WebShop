@@ -178,7 +178,7 @@ namespace Webshop.Edit
                 }
 
                 //Visa Cart info
-                Read.ShowCartItemsInCheckout(db);
+                Read.ShowCartItemsInCheckout();
                 Console.WriteLine("CartItem price: " + totalCartPrice + " SEK");
                 Console.WriteLine("Shipping: " + shippingCost + " SEK");
                 Console.WriteLine("Subtotal: " + (totalCartPrice + shippingCost) + " SEK");
@@ -207,13 +207,14 @@ namespace Webshop.Edit
         public static void Pay(List<Order> orders, int shippingCost)
         {
             Console.WriteLine("Pay Page");
-            using (var db = new Connections.WebShopDbContext())
+            Console.WriteLine();
+            using (var db = new WebShopDbContext())
             {
                 double totalPriceInCart = Helpers.CalculateAllCartItemsPrice();
                 double totalPriceWithShipping = totalPriceInCart + shippingCost;
 
                 //Skriver ut info igen
-                Read.ShowCartItemsInCheckout(db);
+                Read.ShowCartItemsInCheckout();
                 Console.WriteLine("Shipping cost: " + shippingCost + " SEK"); 
                 Console.WriteLine("Including tax: " + Helpers.CalculateTax(totalPriceWithShipping) + " SEK");
                 Console.WriteLine("Subtotal: " + totalPriceWithShipping + " SEK");

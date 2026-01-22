@@ -190,15 +190,19 @@ namespace Webshop.Pages
                     {
                         case ShowStatistics.Show_Best_Selling_Products:
                             Statistics.PrintBestSellingProducts();
+                            Console.ReadKey();
                             break;
                         case ShowStatistics.Show_Most_Popular_Category:
                             Statistics.PrintMostPopularCategories();
+                            Console.ReadKey();
                             break;
                         case ShowStatistics.Show_Most_Popular_Hay:
                             Statistics.PrintMostPopularHay();
+                            Console.ReadKey();
                             break;
                         case ShowStatistics.Show_Sales_Sorted_By_Supplier:
                             Statistics.PrintSalesOrderedBySupplier();
+                            Console.ReadKey();
                             break;
                         case ShowStatistics.Go_Back:
                             isRunning = false;

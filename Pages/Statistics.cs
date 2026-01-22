@@ -13,7 +13,6 @@ namespace Webshop.Pages
     {
         public static void PrintBestSellingProducts()
         {
-            
             Console.WriteLine("Best selling products");
             Console.WriteLine();
             using (var db = new Connections.WebShopDbContext())
@@ -40,7 +39,7 @@ namespace Webshop.Pages
                     double amountEarned = pricePerUnit * amountSold;
 
                     Console.WriteLine($"Product: {productName}");
-                    Console.WriteLine($"Amount sold: {amountSold} | Amount earned: {amountEarned} SEK");
+                    Console.WriteLine($"Amount sold: {amountSold} | Amount earned: {amountEarned.ToString("N2")} SEK");
                     Console.WriteLine();
                 }
             }
@@ -108,7 +107,7 @@ namespace Webshop.Pages
                     double amountEarned = pricePerUnit * amountSold;
 
                     Console.WriteLine($"Product: {productName}");
-                    Console.WriteLine($"Amount sold: {amountSold} | Amount earned: {amountEarned} SEK");
+                    Console.WriteLine($"Amount sold: {amountSold} | Amount earned: {amountEarned.ToString("N2")} SEK");
                     Console.WriteLine();
                 }
             }
@@ -144,7 +143,7 @@ namespace Webshop.Pages
                     double amountEarnedFromProducts = pricePerUnit * amountProductsSold;
 
                     Console.WriteLine($"Supplier: {supplierName}");
-                    Console.WriteLine($"Amount sold: {amountProductsSold} | Amount earned: {amountEarnedFromProducts} SEK");
+                    Console.WriteLine($"Amount sold: {amountProductsSold} | Amount earned: {amountEarnedFromProducts.ToString("N2")} SEK");
                     Console.WriteLine();
                 }
             }
