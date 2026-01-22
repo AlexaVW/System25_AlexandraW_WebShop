@@ -63,11 +63,11 @@ namespace Webshop.Edit
 
                 foreach (var cartItem in cartItems)
                 {
-                    Console.WriteLine("Id: " + cartItem.Id.ToString().PadRight(idLength)
-                        + "Amount: " + cartItem.ProductAmount.ToString().PadRight(amountLength)
-                        + "IsPayed?: " + cartItem.IsPayed.ToString().PadRight(isPayedLength)
-                        + "Product Id: " + cartItem.ProductId.ToString().PadRight(productIdLength)
+                    Console.WriteLine("Cart Id: " + cartItem.Id.ToString().PadRight(idLength)
+                        + "|Product Id: " + cartItem.ProductId.ToString().PadRight(productIdLength)
                         + cartItem.product.Name.PadRight(productNameLength)
+                        + "IsPayed?: " + cartItem.IsPayed.ToString().PadRight(isPayedLength)
+                        + "Amount: " + cartItem.ProductAmount.ToString().PadRight(amountLength)
                         + "Price per unit: " + cartItem.product.PricePerUnit + " SEK");
                 }
                 Console.WriteLine();
@@ -78,6 +78,7 @@ namespace Webshop.Edit
                 Console.WriteLine(ex.Message);
             }
         }
+
 
         public static void ShowCartItemsInCheckout()
         {

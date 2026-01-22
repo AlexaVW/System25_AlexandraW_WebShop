@@ -17,25 +17,36 @@ namespace Webshop.Edit
             {
                 Read.ShowCategories(db);
                 Console.WriteLine("Enter Id:");
-                int selectedId = int.Parse(Console.ReadLine());
-                var selectedCategoryName = (from c in db.Categories
+                int selectedId;
+                bool validIdInput = int.TryParse(Console.ReadLine(), out selectedId);
+                var selectedCategory = (from c in db.Categories
                                          where c.Id == selectedId
                                          select c).SingleOrDefault();
-                if(selectedCategoryName != null)
+                UpdateCategoryName(selectedCategory, db);
+            }
+        }
+        public static void UpdateCategoryName(Category category, WebShopDbContext db)
+        {
+            if (category != null)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Press Enter to not change this column");
+                Console.Write("Update category name: ");
+                var newCategoryName = Console.ReadLine();
+                if (!string.IsNullOrEmpty(newCategoryName))
                 {
-                    Console.Write("Update category name: ");
-                    var newCategoryName = Console.ReadLine();
-                    selectedCategoryName.Name = newCategoryName;
                     try
                     {
+                        category.Name = newCategoryName;
                         db.SaveChanges();
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Console.WriteLine("Ops... Something went wrong");
                         Console.WriteLine(ex.Message);
                     }
                 }
+
             }
         }
 
@@ -264,30 +275,33 @@ namespace Webshop.Edit
             using (var db = new WebShopDbContext())
             {
                 Read.ShowOrderHistory(db);
-                Console.WriteLine("Enter Name:");
+                
+                Console.Write("Enter Name to change information:");
                 string selectedName = Console.ReadLine().ToUpper();
-                var selectedOrders = (from o in db.Orders
+                var selectedOrder = (from o in db.Orders
                                             where o.CustomerName == selectedName
-                                            select o).ToList();
-                if (selectedOrders != null)
+                                            select o).FirstOrDefault();
+                
+                UpdateCustomerName(selectedOrder, db);
+
+                UpdateCustomerAddress(selectedOrder, db);
+
+                UpdateCustomerCountry(selectedOrder, db);
+            }
+        }
+        public static void UpdateCustomerName(Order order, WebShopDbContext db)
+        {
+            if (order != null)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Press Enter to not change this column");
+                Console.Write("Enter new customer name: ");
+                var newCustomerName = Console.ReadLine();
+                if (!string.IsNullOrEmpty(newCustomerName))
                 {
-                    Console.WriteLine("Enter new costumername:");
-                    string newCostumerName = Console.ReadLine();
-
-                    Console.WriteLine("Enter new shipping address:");
-                    string newShippingAdress = Console.ReadLine();
-
-                    Console.WriteLine("Enter new country:");
-                    string newShippingCountry = Console.ReadLine();
-                    
-                    foreach(var order in selectedOrders)
-                    {
-                        order.CustomerName = newCostumerName;
-                        order.ShipAdress = newShippingAdress;
-                        order.ShipCountry = newShippingCountry;
-                    }
                     try
                     {
+                        order.CustomerName = newCustomerName;
                         db.SaveChanges();
                     }
                     catch (Exception ex)
@@ -296,53 +310,119 @@ namespace Webshop.Edit
                         Console.WriteLine(ex.Message);
                     }
                 }
+
             }
         }
+        public static void UpdateCustomerAddress(Order order, WebShopDbContext db)
+        {
+            if (order != null)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Press Enter to not change this column");
+                Console.Write("Enter new address: ");
+                var newAddress = Console.ReadLine();
+                if (!string.IsNullOrEmpty(newAddress))
+                {
+                    try
+                    {
+                        order.ShipAdress = newAddress;
+                        db.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Ops... Something went wrong");
+                        Console.WriteLine(ex.Message);
+                    }
+                }
 
+            }
+        }
+        public static void UpdateCustomerCountry(Order order, WebShopDbContext db)
+        {
+            if (order != null)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Press Enter to not change this column");
+                Console.Write("Enter new country: ");
+                var newCountry = Console.ReadLine();
+                if (!string.IsNullOrEmpty(newCountry))
+                {
+                    try
+                    {
+                        order.ShipCountry = newCountry;
+                        db.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Ops... Something went wrong");
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+
+            }
+        }
         public static void UpdateCartItem()
         {
             using (var db = new WebShopDbContext())
             {
                 Read.ShowCartItems();
 
-                try
-                {
-                    Console.WriteLine("Choose Id to change amount of product");
-                    int selectedId = int.Parse(Console.ReadLine());
-                    var selectedProduct = (from c in db.CartItems
-                                           where c.Id == selectedId
-                                           select c).SingleOrDefault();
-                    if (selectedProduct != null)
-                    {
-                        Console.WriteLine("Press [1] to Increase amount of this product");
-                        Console.WriteLine("Press [2] to Decrease amount of this product");
-                        int increaseOrDecrease = int.Parse(Console.ReadLine());
-                        if (increaseOrDecrease == 1)
-                        {
-                            Console.Write("Amount to Increase: ");
-                            int numberToIncrease = int.Parse(Console.ReadLine());
-                            selectedProduct.ProductAmount += numberToIncrease;
-                        }
-                        else if (increaseOrDecrease == 2)
-                        {
-                            Console.Write("Amount to Decrease: ");
-                            int numberToDecrease = int.Parse(Console.ReadLine());
-                            selectedProduct.ProductAmount -= numberToDecrease;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Press 1 or 2 to change amount"); //Skrivs aldrig ut
-                        }
-                        db.SaveChanges();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Ops... Something went wrong");
-                    Console.WriteLine(ex.Message);
-                }
+                Console.WriteLine("Choose Id to change amount of product");
+                int selectedId;
+                bool validIdInput = int.TryParse(Console.ReadLine(), out selectedId);
+                var selectedCartItem = (from c in db.CartItems
+                                        where c.Id == selectedId
+                                        select c).SingleOrDefault();
+                UpdateCartItemAmount(selectedCartItem, db);
             }
         }
-        
+
+        public static void UpdateCartItemAmount(CartItem cartItem, WebShopDbContext db)
+        {
+            if (cartItem != null)
+            {
+                Console.WriteLine("Press [1] to Increase amount of this product");
+                Console.WriteLine("Press [2] to Decrease amount of this product");
+                int increaseOrDecrease;
+                bool validInpus = int.TryParse(Console.ReadLine(),out increaseOrDecrease);
+                if (increaseOrDecrease == 1)
+                {
+                    Console.Write("Amount to Increase: ");
+                    int numberToIncrease = int.Parse(Console.ReadLine());
+                    try
+                    {
+                        cartItem.ProductAmount += numberToIncrease;
+                        db.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Ops... Something went wrong");
+                        Console.WriteLine(ex.Message);
+                    }
+
+                }
+                else if (increaseOrDecrease == 2)
+                {
+                    Console.Write("Amount to Decrease: ");
+                    int numberToDecrease = int.Parse(Console.ReadLine());
+                    try
+                    {
+                        cartItem.ProductAmount -= numberToDecrease;
+                        db.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Ops... Something went wrong");
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Press 1 or 2 to change amount"); //Skrivs aldrig ut
+                }
+
+            }
+        }
+
     }
 }
