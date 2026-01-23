@@ -39,7 +39,7 @@ namespace Webshop.Menus
     public enum EditOrders
     {
         View_Order_History = 1,
-        Update_Order,
+        Update_Customer_Information,
         Delete_Order,
         Go_Back = 8,
         Exit = 9

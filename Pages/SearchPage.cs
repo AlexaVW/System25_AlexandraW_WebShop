@@ -30,8 +30,6 @@ namespace Webshop.Pages
             }
             string key = Console.ReadKey(true).KeyChar.ToString().ToUpper();
             Helpers.AddProductToCart(productsSearch, key);
-            Console.Clear();
-
         }
     }
 }

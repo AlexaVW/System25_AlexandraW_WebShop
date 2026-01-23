@@ -153,7 +153,7 @@ namespace Webshop.Pages
                             Read.ShowOrderHistory(new WebShopDbContext());
                             Console.ReadKey();
                             break;
-                        case EditOrders.Update_Order:
+                        case EditOrders.Update_Customer_Information:
                             Update.UpdateCustomerInformation();
                             break;
                         case EditOrders.Delete_Order:
@@ -189,19 +189,19 @@ namespace Webshop.Pages
                     switch ((ShowStatistics)num)
                     {
                         case ShowStatistics.Show_Best_Selling_Products:
-                            Statistics.PrintBestSellingProducts();
+                            Statistics.GetBestSellingProducts();
                             Console.ReadKey();
                             break;
                         case ShowStatistics.Show_Most_Popular_Category:
-                            Statistics.PrintMostPopularCategories();
+                            Statistics.GetBestSellingCategories();
                             Console.ReadKey();
                             break;
                         case ShowStatistics.Show_Most_Popular_Hay:
-                            Statistics.PrintMostPopularHay();
+                            Statistics.GetBestSellingHay();
                             Console.ReadKey();
                             break;
                         case ShowStatistics.Show_Sales_Sorted_By_Supplier:
-                            Statistics.PrintSalesOrderedBySupplier();
+                            Statistics.GetSalesOrderedBySupplier();
                             Console.ReadKey();
                             break;
                         case ShowStatistics.Go_Back:

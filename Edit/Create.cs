@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Identity.Client;
 using Webshop.Models;
 using Webshop.Connections;
+using Microsoft.EntityFrameworkCore;
 
 namespace Webshop.Edit
 {
@@ -82,7 +83,7 @@ namespace Webshop.Edit
         
         public static void CreateCartItem(Product product) //Skicka in produkten. Genom användaren
         {
-            using (var db  = new Connections.WebShopDbContext())
+            using (var db  = new WebShopDbContext())
             {
                 int productAmount = 1;
                 bool isPayed = false;
@@ -90,7 +91,7 @@ namespace Webshop.Edit
                 
                 CartItem newCartItem = new CartItem(productAmount, isPayed, productId);
                 //Kollar om produkten med Id finns i cartitem, annars använd update för ändra ProductAmount
-                var alreadyInCart = db.CartItems.Where(c => c.IsPayed == false).Where(c => c.ProductId == productId).SingleOrDefault();
+                var alreadyInCart = db.CartItems.Where(ci => ci.IsPayed == false).Where(ci => ci.ProductId == productId).SingleOrDefault();
                 try
                 {
                     if (alreadyInCart != null)
@@ -111,7 +112,7 @@ namespace Webshop.Edit
                 }
             }
         }
-
+       
         public static void CreateOrder()
         {
             string name = "";
@@ -123,7 +124,7 @@ namespace Webshop.Edit
 
             int shippingCost = 0;
 
-            //Behåll för att visa upp priset bara
+            //För att visa upp priset bara
             double totalCartPrice = Helpers.CalculateAllCartItemsPrice();
 
             List<CartItem> cartItems = Helpers.GetCartItemsNotPayed();
@@ -131,7 +132,7 @@ namespace Webshop.Edit
             Console.WriteLine("Checkout Page");
             Console.WriteLine();
             Console.WriteLine("Enter your shipping information");
-            using (var db = new Connections.WebShopDbContext())
+            using (var db = new WebShopDbContext())
             {
                 Console.Write("Name: ");
                 name = Console.ReadLine();
@@ -145,55 +146,28 @@ namespace Webshop.Edit
                 Console.WriteLine("Choose shipping method");
                 Console.WriteLine("[1] Express shipping (1-2 days) 69 SEK");
                 Console.WriteLine("[2] Basic shipping (3-5 days) 49 SEK");
-                int choosenShippingMethod = int.Parse(Console.ReadLine());
-                if( choosenShippingMethod == 1)
+                int selectedShipping;
+                bool validShippingInput = int.TryParse(Console.ReadLine(), out selectedShipping);
+                if(selectedShipping == 1)
                 {
                     shippingMethod = "Express Shipping";
                     shippingCost = 69;
                 }
-                if( choosenShippingMethod == 2)
+                else
                 {
                     shippingMethod = "Basic Shipping";
                     shippingCost = 49;
                 }
 
-                Console.WriteLine("Choose payment method");
-                Console.WriteLine("[1] Card");
-                Console.WriteLine("[2] Klarna");
-                int choosenPaymentMethod = int.Parse(Console.ReadLine());
-                if( choosenPaymentMethod == 1)
-                {
-                    paymentMethod = "Card";
-                }
-                if ( choosenPaymentMethod == 2)
-                {
-                    paymentMethod = "Klarna";
-                }
+                paymentMethod = ChoosePaymentMethod();
 
                 //Visa Cart info
                 Read.ShowCartItemsInCheckout();
-                Console.WriteLine("CartItem price: " + totalCartPrice + " SEK");
-                Console.WriteLine("Shipping: " + shippingCost + " SEK");
-                Console.WriteLine("Subtotal: " + (totalCartPrice + shippingCost) + " SEK");
+                ShowCheckoutInformation(paymentMethod, totalCartPrice, shippingCost);
                 
-                //Loopa igenom, lägg till en order per cartitem.
-                List<Order> orders = new List<Order>();
-                foreach(CartItem cartItem in cartItems)
-                {
-                    double itemPrice = cartItem.product.PricePerUnit * cartItem.ProductAmount;
+                List<Order> orders = AddOrderToList(name, address, country, shippingMethod, paymentMethod, db, cartItems);
 
-                    Order newOrder = new Order(name, address, country, shippingMethod, paymentMethod, itemPrice, cartItem.Id);
-                    orders.Add(newOrder);
-                }
-
-                Console.WriteLine("Press [1] to continue");
-                int pay = int.Parse(Console.ReadLine());
-                if (pay == 1)
-                {
-                    Console.Clear();
-
-                    Pay(orders, shippingCost);
-                }
+                ContinueToPay(orders, shippingCost);
             }
         }
         
@@ -208,44 +182,113 @@ namespace Webshop.Edit
 
                 //Skriver ut info igen
                 Read.ShowCartItemsInCheckout();
-                Console.WriteLine("Shipping cost: " + shippingCost + " SEK"); 
-                Console.WriteLine("Including tax: " + Helpers.CalculateTax(totalPriceWithShipping) + " SEK");
-                Console.WriteLine("Subtotal: " + totalPriceWithShipping + " SEK");
+                ShowFinalPrice(shippingCost, totalPriceWithShipping);
+                
+                ConfirmPayment(orders, db);
 
-                Console.WriteLine("Press [1] to pay");
-                int pay = int.Parse(Console.ReadLine());
-                if (pay == 1)
+                ShowConfirmationText();
+            }
+        }
+        public static string ChoosePaymentMethod()
+        {
+            Console.WriteLine("Choose payment method");
+            Console.WriteLine("[1] Card");
+            Console.WriteLine("[2] Klarna");
+            int selectedPayment;
+            bool validPaymentInput = int.TryParse(Console.ReadLine(), out selectedPayment);
+
+            if (selectedPayment == 1)
+            {
+                return "Card";
+            }
+            else
+            {
+                return "Klarna";
+            }
+
+            //return selectedPayment == 1 ? "Card" : "Klarna";
+        }
+
+        public static void ShowCheckoutInformation(string paymentMethod, double totalCartPrice, int shippingCost)
+        {
+            Console.WriteLine("Payment method: " + paymentMethod);
+            Console.WriteLine("CartItem price: " + totalCartPrice + " SEK");
+            Console.WriteLine("Shipping: " + shippingCost + " SEK");
+            Console.WriteLine("Subtotal: " + (totalCartPrice + shippingCost) + " SEK");
+        }
+
+        public static void ContinueToPay(List<Order> orders, int shippingCost)
+        {
+            Console.WriteLine("Press [1] to continue");
+            int pay = int.Parse(Console.ReadLine());
+            if (pay == 1)
+            {
+                Console.Clear();
+                Pay(orders, shippingCost);
+            }
+        }
+
+        public static void ShowFinalPrice(int shippingCost, double totalPriceWithShipping)
+        {
+            Console.WriteLine("Shipping cost: " + shippingCost + " SEK");
+            Console.WriteLine("Including tax: " + Helpers.CalculateTax(totalPriceWithShipping) + " SEK");
+            Console.WriteLine("Subtotal: " + totalPriceWithShipping + " SEK");
+        }
+
+        public static void ConfirmPayment(List<Order> orders, WebShopDbContext db)
+        {
+            Console.WriteLine("Press [1] to pay");
+            int pay;
+            bool validInput = int.TryParse(Console.ReadLine(), out pay);
+
+            if (pay == 1)
+            {
+                DateTime orderDate = DateTime.Now; //Blir samma datum för alla ordar eftersom den ligger utanför loopen
+                foreach (Order order in orders)
                 {
-                    DateTime orderDate = DateTime.Now; //Blir samma datum för alla ordar eftersom den ligger utanför loopen
-                    foreach (Order order in orders)
+                    try
                     {
-                        try
-                        {
-                            db.Orders.Add(order);
-                            order.OrderDate = orderDate;
+                        db.Orders.Add(order);
+                        order.OrderDate = orderDate;
+                        var cartItemsToPay = db.CartItems.Where(c => c.IsPayed == false).Include(ci => ci.product).ToList();
 
-                            var cartItemsToPay = db.CartItems.Where(c => c.IsPayed == false).ToList();
-
-                            foreach (var cartItem in cartItemsToPay)
-                            {
-                                cartItem.IsPayed = true;
-                            }
-                            db.SaveChanges();
-                        }
-                        catch (Exception ex)
+                        foreach (var cartItem in cartItemsToPay)
                         {
-                            Console.WriteLine("Ops... Something went wrong");
-                            Console.WriteLine(ex.Message);
+                            cartItem.product.UnitsInStock -= cartItem.ProductAmount;
+                            cartItem.IsPayed = true;
                         }
+                        db.SaveChanges();
                     }
-                    Console.WriteLine("Your payment is done. Welcome back.");
-                    Console.WriteLine("Press any key");
-                    Console.ReadKey();
-                    Console.Clear();
-                    WindowStructure.HomePage();
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Ops... Something went wrong");
+                        Console.WriteLine(ex.Message);
+                    }
                 }
             }
         }
-        
+
+        public static void ShowConfirmationText()
+        {
+            Console.WriteLine("Your payment is done. Welcome back.");
+            Console.WriteLine("Press any key");
+            Console.ReadKey();
+            Console.Clear();
+            WindowStructure.HomePage();
+        }
+
+        public static List<Order> AddOrderToList(string name, string address, string country, string shippingMethod, string paymentMethod, WebShopDbContext db, List<CartItem> cartItems)
+        {
+            //Loopar igenom, lägger till en order per cartitem.
+            List<Order> orders = new List<Order>();
+            foreach (CartItem cartItem in cartItems)
+            {
+                double itemPrice = cartItem.product.PricePerUnit * cartItem.ProductAmount;
+
+                Order newOrder = new Order(name, address, country, shippingMethod, paymentMethod, itemPrice, cartItem.Id);
+                orders.Add(newOrder);
+            }
+            return orders;
+        }
     }
 }

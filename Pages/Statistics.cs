@@ -11,10 +11,8 @@ namespace Webshop.Pages
 {
     internal class Statistics
     {
-        public static void PrintBestSellingProducts()
+        public static void GetBestSellingProducts()
         {
-            Console.WriteLine("Best selling products");
-            Console.WriteLine();
             using (var db = new Connections.WebShopDbContext())
             {
                 //Hämta cartItems som är betalda
@@ -31,26 +29,12 @@ namespace Webshop.Pages
                 //Väljer ut de 10 första
                 productGroups = productGroups.Take(10);
 
-                foreach (var group in productGroups) 
-                {
-                    string productName = group.First().product.Name;
-                    int amountSold = group.Sum(ci => ci.ProductAmount);
-                    double pricePerUnit = group.First().product.PricePerUnit;
-                    double amountEarned = pricePerUnit * amountSold;
-
-                    Console.WriteLine($"Product: {productName}");
-                    Console.WriteLine($"Amount sold: {amountSold} | Amount earned: {amountEarned.ToString("N2")} SEK");
-                    Console.WriteLine();
-                }
+                PrintBestSellingProducts(productGroups);
             }
-            
         }
 
-        public static void PrintMostPopularCategories()
+        public static void GetBestSellingCategories()
         {
-            
-            Console.WriteLine("Best selling categories");
-            Console.WriteLine();
             using (var db = new Connections.WebShopDbContext())
             {
                 //Hämta cartItems som är betalda
@@ -66,23 +50,13 @@ namespace Webshop.Pages
 
                 //Väljer ut de 10 första
                 productGroups = productGroups.Take(10);
-
-                foreach (var group in productGroups)
-                {
-                    string categoryName = group.First().product.Category.Name;
-                    int amountSold = group.Sum(ci => ci.ProductAmount); //Summera gruppens productAmount
-
-                    Console.WriteLine($"Category: {categoryName}");
-                    Console.WriteLine($"Amount sold: {amountSold}");
-                    Console.WriteLine();
-                }
+                
+                PrintBestSellingCategories(productGroups);
             }
         }
 
-        public static void PrintMostPopularHay()
+        public static void GetBestSellingHay()
         {
-            Console.WriteLine("Best selling hay");
-            Console.WriteLine();
             using (var db = new Connections.WebShopDbContext())
             {
                 //Hämta cartItems som är betalda
@@ -99,25 +73,12 @@ namespace Webshop.Pages
                 //Väljer ut de 10 första
                 productGroups = productGroups.Take(10);
 
-                foreach (var group in productGroups)
-                {
-                    string productName = group.First().product.Name;
-                    int amountSold = group.Sum(ci => ci.ProductAmount);
-                    double pricePerUnit = group.First().product.PricePerUnit;
-                    double amountEarned = pricePerUnit * amountSold;
-
-                    Console.WriteLine($"Product: {productName}");
-                    Console.WriteLine($"Amount sold: {amountSold} | Amount earned: {amountEarned.ToString("N2")} SEK");
-                    Console.WriteLine();
-                }
+                PrintBestSellingHay(productGroups);
             }
         }
-
         
-        public static void PrintSalesOrderedBySupplier()
+        public static void GetSalesOrderedBySupplier()
         {
-            Console.WriteLine("Sales ordered by supplier");
-            Console.WriteLine();
             using (var db = new Connections.WebShopDbContext())
             {
                 //Hämta cartItems som är betalda
@@ -127,27 +88,82 @@ namespace Webshop.Pages
 
                 //Grupperar på Supplier
                 var supplierGroups = cartItems
-                    .GroupBy(ci => ci.product.Supplier);
+                    .GroupBy(ci => ci.product.Supplier).ToList();
 
                 //Sorterar innan take
-                supplierGroups = supplierGroups.OrderByDescending(group => group.Sum(ci => ci.ProductAmount));
+                supplierGroups = supplierGroups.OrderByDescending(group => group.Sum(ci => ci.ProductAmount)).ToList();
 
                 //Väljer ut de 10 första
                 supplierGroups = supplierGroups.Take(10).ToList();
 
-                foreach (var group in supplierGroups)
-                {
-                    string supplierName = group.Key;
-                    int amountProductsSold = group.Sum(ci => ci.ProductAmount);
-                    double pricePerUnit = group.First().product.PricePerUnit;
-                    double amountEarnedFromProducts = pricePerUnit * amountProductsSold;
+                PrintSalesOrderedBySupplier(supplierGroups);
+            }
+        }
 
-                    Console.WriteLine($"Supplier: {supplierName}");
-                    Console.WriteLine($"Amount sold: {amountProductsSold} | Amount earned: {amountEarnedFromProducts.ToString("N2")} SEK");
-                    Console.WriteLine();
-                }
+        public static void PrintBestSellingProducts(IEnumerable<IGrouping<int, CartItem>> groups)
+        {
+            Console.WriteLine("Best selling products");
+            Console.WriteLine();
+            foreach (var group in groups)
+            {
+                string productName = group.First().product.Name;
+                int amountSold = group.Sum(ci => ci.ProductAmount);
+                double pricePerUnit = group.First().product.PricePerUnit;
+                double amountEarned = pricePerUnit * amountSold;
+
+                Console.WriteLine($"Product: {productName}");
+                Console.WriteLine($"Amount sold: {amountSold} | Amount earned: {amountEarned.ToString("N2")} SEK");
+                Console.WriteLine();
+            }
+        }
+
+        public static void PrintBestSellingCategories(IEnumerable<IGrouping<int, CartItem>> groups)
+        {
+            Console.WriteLine("Best selling categories");
+            Console.WriteLine();
+            foreach (var group in groups)
+            {
+                string categoryName = group.First().product.Category.Name;
+                int amountSold = group.Sum(ci => ci.ProductAmount); //Summera gruppens productAmount
+
+                Console.WriteLine($"Category: {categoryName}");
+                Console.WriteLine($"Amount sold: {amountSold}");
+                Console.WriteLine();
+            }
+        }
+
+        public static void PrintBestSellingHay(IEnumerable<IGrouping<int, CartItem>> groups)
+        {
+            Console.WriteLine("Best selling hay");
+            Console.WriteLine();
+            foreach (var group in groups)
+            {
+                string productName = group.First().product.Name;
+                int amountSold = group.Sum(ci => ci.ProductAmount);
+                double pricePerUnit = group.First().product.PricePerUnit;
+                double amountEarned = pricePerUnit * amountSold;
+
+                Console.WriteLine($"Product: {productName}");
+                Console.WriteLine($"Amount sold: {amountSold} | Amount earned: {amountEarned.ToString("N2")} SEK");
+                Console.WriteLine();
+            }
+        }
+
+        public static void PrintSalesOrderedBySupplier(List<IGrouping<string, CartItem>> groups)
+        {
+            Console.WriteLine("Sales ordered by supplier");
+            Console.WriteLine();
+            foreach (var group in groups)
+            {
+                string supplierName = group.Key;
+                int amountProductsSold = group.Sum(ci => ci.ProductAmount);
+                double pricePerUnit = group.First().product.PricePerUnit;
+                double amountEarnedFromProducts = pricePerUnit * amountProductsSold;
+
+                Console.WriteLine($"Supplier: {supplierName}");
+                Console.WriteLine($"Amount sold: {amountProductsSold} | Amount earned: {amountEarnedFromProducts.ToString("N2")} SEK");
+                Console.WriteLine();
             }
         }
     }
-    
 }

@@ -67,7 +67,7 @@ namespace Webshop.Pages
                         Update.UpdateCartItem();
                         break;
                     case '3': //Delete cart item
-                         Delete.DeleteCartItem();
+                        Delete.DeleteCartItem();
                         break;
                     case '4': //Checkout
                         Create.CreateOrder();

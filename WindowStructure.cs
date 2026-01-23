@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Webshop.Edit;
 using Webshop.Models;
 using Webshop.Pages;
-using WindowDemo;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Webshop
@@ -28,21 +27,19 @@ namespace Webshop
             switch (key)
             {
                 case "0":
-                    Pages.AdminPages.PrintMenuFirstAdminPage();
+                    AdminPages.PrintMenuFirstAdminPage();
                     break;
                 case "1":
-                    Pages.CostumerPages.ShoppingPage();
+                    CostumerPages.ShoppingPage();
                     break;
                 case "2":
-                    Pages.CostumerPages.CartPage();
+                    CostumerPages.CartPage();
                     break;
                 case "9":
                     Environment.Exit(0);
                     break;
-
             }
         }
-
         public static void CategoryPage(List<Product> categoryProducts)
         {
             bool isRunning = true;
@@ -59,7 +56,6 @@ namespace Webshop
                     Console.Clear();
                     ShowMoreProductInfo(categoryProducts[Helpers.GetButtonIndex(key)]);
                 }
-
                 Console.Clear();
                 switch (key)
                 {
@@ -69,13 +65,9 @@ namespace Webshop
                     case "9":
                         Environment.Exit(0);
                         break;
-
                 }
             }
-            
         }
-
-
         public static void DrawHomePageWindows()
         {
             //Skriver ut butikens namn
@@ -102,7 +94,7 @@ namespace Webshop
         public static void DrawProductsOnSaleWindows(List<Product> productsOnSale)
         {
             //Positioner för fönstrerna
-            int onSaleTopPad = 15;
+            int posTop = 15;
             int posLeft = 2;
             int padWindowProduct = 4;
 
@@ -112,7 +104,7 @@ namespace Webshop
                 //Ritar ut produkterna i fönster
                 string pressKey = $"Press [" + Helpers.GetChars()[i] + "] To Buy";
                 List<string> text = new List<string> { productsOnSale[i].Name, productsOnSale[i].Description, productsOnSale[i].PricePerUnit.ToString() + " SEK", pressKey };
-                var productWindow = new Window("On Sale", posLeft, onSaleTopPad, text);
+                var productWindow = new Window("On Sale", posLeft, posTop, text);
                 productWindow.Draw();
 
                 //Fönstrets längd beror på texternas längd
@@ -130,8 +122,6 @@ namespace Webshop
                 }
             }
         }
-
-
 
         public static void DrawCategoryPageMenu(List<Product> productsInCategory)
         {
