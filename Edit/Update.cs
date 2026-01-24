@@ -46,7 +46,6 @@ namespace Webshop.Edit
                         Console.WriteLine(ex.Message);
                     }
                 }
-
             }
         }
 

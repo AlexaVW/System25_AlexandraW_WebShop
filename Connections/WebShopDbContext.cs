@@ -21,10 +21,9 @@ namespace Webshop.Connections
 
             var connStr = config["MySettings:ConnectionString"];
             optionsBuilder.UseSqlServer(connStr);
-            
         }
 
-       //Gör så man inte kan ta bort kategori med produkter i
+       // Can't delete a category that contains products
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>()

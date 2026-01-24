@@ -18,18 +18,20 @@ namespace Webshop.Pages
             Console.WriteLine();
             for (int i = 0; i < productsSearch.Count; i++)
             {
-                if (Helpers.GetChars()[i] != -1) //Ifall index inte är -1
+                if (Helpers.GetButtonKeys()[i] != -1) //If index of selected button is not -1
                 {
-                    string pressKey = $"Press [" + Helpers.GetChars()[i] + "] To Buy";
+                    //Prints products with buttons to select a product
+                    string pressKey = $"Press [" + Helpers.GetButtonKeys()[i] + "] To Buy";
                     Console.WriteLine(productsSearch[i].Name);
                     Console.WriteLine(productsSearch[i].Description);
                     Console.WriteLine(productsSearch[i].PricePerUnit + " SEK");
-                    Console.WriteLine(pressKey);
+                    Console.WriteLine(pressKey); 
                     Console.WriteLine();
                 }
             }
-            string key = Console.ReadKey(true).KeyChar.ToString().ToUpper();
-            Helpers.AddProductToCart(productsSearch, key);
+            // Adding the selected product to cart
+            string button = Console.ReadKey(true).KeyChar.ToString().ToUpper();
+            Helpers.AddProductToCart(productsSearch, button);
         }
     }
 }

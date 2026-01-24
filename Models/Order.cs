@@ -16,9 +16,10 @@ namespace Webshop.Models
         public string ShippingMethod { get; set; }
         public string PaymentMethod { get; set; }
         public double ItemPrice { get; set; }
-        public int CartItemId { get; set; }
+        public int CartItemId { get; set; } // FK
 
-        public CartItem CartItem { get; set; } //Ett cartitem har en order
+        // One cart item have one order
+        public CartItem CartItem { get; set; }
 
         public Order(string customerName, string shipAdress, string shipCountry, string shippingMethod, string paymentMethod, double itemPrice, int cartItemId)
         {

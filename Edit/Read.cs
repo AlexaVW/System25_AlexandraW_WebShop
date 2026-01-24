@@ -52,12 +52,12 @@ namespace Webshop.Edit
 
         public static void ShowCartItems()
         {
-            List<CartItem> cartItems = Helpers.GetCartItemsNotPayed();
+            List<CartItem> cartItems = Helpers.GetCartItemsNotPaid();
             try
             {
                 int idLength = cartItems.Max(ci => ci.Id.ToString().Length) + 2;
                 int amountLength = cartItems.Max(ci => ci.ProductAmount.ToString().Length) + 2;
-                int isPayedLength = cartItems.Max(ci => ci.IsPayed.ToString().Length) + 2;
+                int isPaidLength = cartItems.Max(ci => ci.IsPaid.ToString().Length) + 2;
                 int productIdLength = cartItems.Max(ci => ci.ProductId.ToString().Length) + 2;
                 int productNameLength = cartItems.Max(ci => ci.product.Name.Length) + 2;
 
@@ -66,7 +66,7 @@ namespace Webshop.Edit
                     Console.WriteLine("Cart Id: " + cartItem.Id.ToString().PadRight(idLength)
                         + "|Product Id: " + cartItem.ProductId.ToString().PadRight(productIdLength)
                         + cartItem.product.Name.PadRight(productNameLength)
-                        + "IsPayed?: " + cartItem.IsPayed.ToString().PadRight(isPayedLength)
+                        + "IsPaid?: " + cartItem.IsPaid.ToString().PadRight(isPaidLength)
                         + "Amount: " + cartItem.ProductAmount.ToString().PadRight(amountLength)
                         + "Price per unit: " + cartItem.product.PricePerUnit + " SEK");
                 }
@@ -82,7 +82,7 @@ namespace Webshop.Edit
 
         public static void ShowCartItemsInCheckout()
         {
-            List<CartItem> cartItems = Helpers.GetCartItemsNotPayed();
+            List<CartItem> cartItems = Helpers.GetCartItemsNotPaid();
             int amountLength = cartItems.Max(ci => ci.ProductAmount.ToString().Length) + 2;
             int productNameLength = cartItems.Max(ci => ci.product.Name.Length) + 2;
 

@@ -26,7 +26,8 @@ namespace Webshop
             return productsOnSale;
         }
 
-        public static List<Product> GetCategoryProducts(int selectedCategoryId) //Hämtar kategorierna med sina produkter i
+        // Gets the categories with their products in based on selected Id
+        public static List<Product> GetCategoryProducts(int selectedCategoryId) 
         {
             using (var db = new WebShopDbContext())
             {
@@ -42,8 +43,8 @@ namespace Webshop
             }
         }
 
-        //För att rita ut val av knappar
-        public static List<char> GetChars()
+        // To print out the buttons to select from when selecting product
+        public static List<char> GetButtonKeys()
         {
             List <char> chars = new List<char>() 
             { 
@@ -54,13 +55,14 @@ namespace Webshop
             return chars;
         }
 
-        //För att få ut vilket värde användaren tröck på
-        public static int GetButtonIndex(string selectedChar)
+        // To get which index the user clicked on
+        public static int GetButtonIndex(string selectedButton)
         {
-            return "QWERTYUIOPASDFGHJKLZXCVBNM".IndexOf(selectedChar.ToUpper());
+            int index = "QWERTYUIOPASDFGHJKLZXCVBNM".IndexOf(selectedButton.ToUpper());
+            return index;
             
             //int value = -1;
-            //switch (selectedChar.ToUpper())
+            //switch (selectedButton.ToUpper())
             //{
             //    case "Q":
             //        value = 0;
@@ -146,9 +148,9 @@ namespace Webshop
 
         public static void AddProductToCart(List<Product> productsOnSale, string selectedChar)
         {
-            int selectedProduct = Helpers.GetButtonIndex(selectedChar); //Får ut t.ex värde Q = 0, W = 1
+            int selectedProduct = Helpers.GetButtonIndex(selectedChar); // Gets the value Q = 0, W = 1, E = 2 for example
 
-            //Nytt fönster som endast visar information om vald produkt.
+            // Adding the selected product to cart
             if (selectedProduct >= 0 && selectedProduct < productsOnSale.Count)
             {
                 Create.CreateCartItem(productsOnSale[selectedProduct]);
@@ -163,7 +165,7 @@ namespace Webshop
             double totalPrice = 0;
             using (var db = new WebShopDbContext())
             {
-                List<CartItem> cartItems = GetCartItemsNotPayed();
+                List<CartItem> cartItems = GetCartItemsNotPaid();
                 foreach (var cartItem in cartItems)
                 {
                     totalPrice += cartItem.product.PricePerUnit * cartItem.ProductAmount;
@@ -180,19 +182,17 @@ namespace Webshop
             return calculatedTax;
         }
 
-        public static List<CartItem> GetCartItemsNotPayed() 
+        public static List<CartItem> GetCartItemsNotPaid() 
         {
-            List<CartItem> cartItemsNotPayed = new List<CartItem>();
+            List<CartItem> cartItemsNotPaid = new List<CartItem>();
             using(var db = new WebShopDbContext())
             {
-                foreach(var cartItem in db.CartItems.Where(ci => ci.IsPayed == false).Include(ci => ci.product))
+                foreach(var cartItem in db.CartItems.Where(ci => ci.IsPaid == false).Include(ci => ci.product))
                 {
-                    cartItemsNotPayed.Add(cartItem);
+                    cartItemsNotPaid.Add(cartItem);
                 }
             }
-            return cartItemsNotPayed;
+            return cartItemsNotPaid;
         }
-
-        
     }
 }

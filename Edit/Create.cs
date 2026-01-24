@@ -81,22 +81,21 @@ namespace Webshop.Edit
             }
         }
         
-        public static void CreateCartItem(Product product) //Skicka in produkten. Genom användaren
+        public static void CreateCartItem(Product product)
         {
             using (var db  = new WebShopDbContext())
             {
-                int productAmount = 1;
-                bool isPayed = false;
+                int productAmount = 1; // Amount starts with 1
+                bool isPaid = false; // isPaid is false until after payment of the cart item
                 int productId = product.Id;
                 
-                CartItem newCartItem = new CartItem(productAmount, isPayed, productId);
-                //Kollar om produkten med Id finns i cartitem, annars använd update för ändra ProductAmount
-                var alreadyInCart = db.CartItems.Where(ci => ci.IsPayed == false).Where(ci => ci.ProductId == productId).SingleOrDefault();
+                CartItem newCartItem = new CartItem(productAmount, isPaid, productId);
+                // If the product with the same id is already in cart = Add to cart, else = add product amount
+                var alreadyInCart = db.CartItems.Where(ci => ci.IsPaid == false).Where(ci => ci.ProductId == productId).SingleOrDefault();
                 try
                 {
                     if (alreadyInCart != null)
                     {
-                        //Om produkten finns - plussa på 1 antal 
                         alreadyInCart.ProductAmount += 1;
                     }
                     else
@@ -124,10 +123,10 @@ namespace Webshop.Edit
 
             int shippingCost = 0;
 
-            //För att visa upp priset bara
+            // To show total cart price
             double totalCartPrice = Helpers.CalculateAllCartItemsPrice();
 
-            List<CartItem> cartItems = Helpers.GetCartItemsNotPayed();
+            List<CartItem> cartItems = Helpers.GetCartItemsNotPaid();
             
             Console.WriteLine("Checkout Page");
             Console.WriteLine();
@@ -161,7 +160,7 @@ namespace Webshop.Edit
 
                 paymentMethod = ChoosePaymentMethod();
 
-                //Visa Cart info
+                //Show cart info
                 Read.ShowCartItemsInCheckout();
                 ShowCheckoutInformation(paymentMethod, totalCartPrice, shippingCost);
                 
@@ -180,7 +179,7 @@ namespace Webshop.Edit
                 double totalPriceInCart = Helpers.CalculateAllCartItemsPrice();
                 double totalPriceWithShipping = totalPriceInCart + shippingCost;
 
-                //Skriver ut info igen
+                //Show cart info again
                 Read.ShowCartItemsInCheckout();
                 ShowFinalPrice(shippingCost, totalPriceWithShipping);
                 
@@ -205,8 +204,6 @@ namespace Webshop.Edit
             {
                 return "Klarna";
             }
-
-            //return selectedPayment == 1 ? "Card" : "Klarna";
         }
 
         public static void ShowCheckoutInformation(string paymentMethod, double totalCartPrice, int shippingCost)
@@ -243,19 +240,20 @@ namespace Webshop.Edit
 
             if (pay == 1)
             {
-                DateTime orderDate = DateTime.Now; //Blir samma datum för alla ordar eftersom den ligger utanför loopen
+                // All orders in this order gets the same date
+                DateTime orderDate = DateTime.Now; 
                 foreach (Order order in orders)
                 {
                     try
                     {
                         db.Orders.Add(order);
                         order.OrderDate = orderDate;
-                        var cartItemsToPay = db.CartItems.Where(c => c.IsPayed == false).Include(ci => ci.product).ToList();
+                        var cartItemsToPay = db.CartItems.Where(c => c.IsPaid == false).Include(ci => ci.product).ToList();
 
                         foreach (var cartItem in cartItemsToPay)
                         {
                             cartItem.product.UnitsInStock -= cartItem.ProductAmount;
-                            cartItem.IsPayed = true;
+                            cartItem.IsPaid = true;
                         }
                         db.SaveChanges();
                     }
@@ -279,7 +277,7 @@ namespace Webshop.Edit
 
         public static List<Order> AddOrderToList(string name, string address, string country, string shippingMethod, string paymentMethod, WebShopDbContext db, List<CartItem> cartItems)
         {
-            //Loopar igenom, lägger till en order per cartitem.
+            // Loops through every cartitem, adds one order per cartitem
             List<Order> orders = new List<Order>();
             foreach (CartItem cartItem in cartItems)
             {

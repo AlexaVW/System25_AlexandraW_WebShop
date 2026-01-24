@@ -15,20 +15,21 @@ namespace Webshop.Pages
         {
             using (var db = new Connections.WebShopDbContext())
             {
-                //Hämta cartItems som är betalda
+                // Gets cart items that are paid
                 var cartItems = db.CartItems
                     .Include(ci => ci.product).ThenInclude(p => p.Category)
-                    .Where(ci => ci.IsPayed == true).ToList();
+                    .Where(ci => ci.IsPaid == true).ToList();
 
-                //Grupperar på produkt id
+                // Grouping on ProductId
                 var productGroups = cartItems.GroupBy(ci => ci.ProductId);
 
-                //Sorterar innan take
+                // Order the Cart Items (that are grouped on ProductId) by decending. Calculating the sum of ProductAmount.
                 productGroups = productGroups.OrderByDescending(group => group.Sum(ci => ci.ProductAmount));
 
-                //Väljer ut de 10 första
+                // Selecting the first 10
                 productGroups = productGroups.Take(10);
 
+                // Printing the best selling products
                 PrintBestSellingProducts(productGroups);
             }
         }
@@ -37,20 +38,21 @@ namespace Webshop.Pages
         {
             using (var db = new Connections.WebShopDbContext())
             {
-                //Hämta cartItems som är betalda
+                // Gets cart items that are paid
                 var cartItems = db.CartItems
                     .Include(ci => ci.product).ThenInclude(p => p.Category)
-                    .Where(ci => ci.IsPayed == true).ToList();
+                    .Where(ci => ci.IsPaid == true).ToList();
 
-                //Grupperar på kategori id
+                // Grouping on the products CategoryId
                 var productGroups = cartItems.GroupBy(ci => ci.product.CategoryId);
 
-                //Sorterar innan take. Sorterar på summan av gruppens mängd sålda produkter
+                // Order the Cart Items (that are grouped on CategoryId) by decending. Calculating the sum of ProductAmount.
                 productGroups = productGroups.OrderByDescending(group => group.Sum(ci => ci.ProductAmount));
 
-                //Väljer ut de 10 första
+                // Selecting the first 10
                 productGroups = productGroups.Take(10);
                 
+                // Printing the best selling categories
                 PrintBestSellingCategories(productGroups);
             }
         }
@@ -59,20 +61,21 @@ namespace Webshop.Pages
         {
             using (var db = new Connections.WebShopDbContext())
             {
-                //Hämta cartItems som är betalda
+                // Gets cart items that are paid
                 var cartItems = db.CartItems
                     .Include(ci => ci.product).ThenInclude(p => p.Category)
-                    .Where(ci => ci.IsPayed == true).ToList();
+                    .Where(ci => ci.IsPaid == true).ToList();
 
-                //Grupperar på produkt id
+                // Gets products that has the string "Hay" in product name. Grouping by ProductId
                 var productGroups = cartItems.Where(ci => ci.product.Name.Contains("Hay")).GroupBy(ci => ci.ProductId);
 
-                //Sorterar innan take
+                // Order the Cart Items (that are grouped on ProductId) by decending. Calculating the sum of ProductAmount.
                 productGroups = productGroups.OrderByDescending(group => group.Sum(ci => ci.ProductAmount));
 
-                //Väljer ut de 10 första
+                // Selecting the first 10
                 productGroups = productGroups.Take(10);
 
+                // Printing best selling hay
                 PrintBestSellingHay(productGroups);
             }
         }
@@ -81,27 +84,31 @@ namespace Webshop.Pages
         {
             using (var db = new Connections.WebShopDbContext())
             {
-                //Hämta cartItems som är betalda
+                // Gets cart items that are paid
                 var cartItems = db.CartItems
                     .Include(ci => ci.product)
-                    .Where(ci => ci.IsPayed == true).ToList();
+                    .Where(ci => ci.IsPaid == true).ToList();
 
-                //Grupperar på Supplier
-                var supplierGroups = cartItems
-                    .GroupBy(ci => ci.product.Supplier).ToList();
+                // Grouping on Supplier
+                var supplierGroups = cartItems.GroupBy(ci => ci.product.Supplier).ToList();
 
-                //Sorterar innan take
+                // Order the Cart Items (that are grouped on Supplier) by decending. Calculating the sum of ProductAmount
                 supplierGroups = supplierGroups.OrderByDescending(group => group.Sum(ci => ci.ProductAmount)).ToList();
 
-                //Väljer ut de 10 första
+                // Selecting the first 10
                 supplierGroups = supplierGroups.Take(10).ToList();
 
+                // Printing supplier with best sales
                 PrintSalesOrderedBySupplier(supplierGroups);
             }
         }
 
         public static void PrintBestSellingProducts(IEnumerable<IGrouping<int, CartItem>> groups)
         {
+            // Showing the product name,
+            // amount sold of that product and
+            // total amount earned from that product
+
             Console.WriteLine("Best selling products");
             Console.WriteLine();
             foreach (var group in groups)

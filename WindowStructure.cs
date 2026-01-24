@@ -102,7 +102,7 @@ namespace Webshop
             for (int i = 0; i < productsOnSale.Count; i++)
             {
                 //Ritar ut produkterna i fönster
-                string pressKey = $"Press [" + Helpers.GetChars()[i] + "] To Buy";
+                string pressKey = $"Press [" + Helpers.GetButtonKeys()[i] + "] To Buy";
                 List<string> text = new List<string> { productsOnSale[i].Name, productsOnSale[i].Description, productsOnSale[i].PricePerUnit.ToString() + " SEK", pressKey };
                 var productWindow = new Window("On Sale", posLeft, posTop, text);
                 productWindow.Draw();
@@ -147,7 +147,7 @@ namespace Webshop
             //Loopar igenom listan som skickats in i metoden med alla produkter i kategorierna
             for (int i = 0; i < productsInCategory.Count; i++)
             {
-                string pressKey = $"Press [" + Helpers.GetChars()[i] + "] To Show More";
+                string pressKey = $"Press [" + Helpers.GetButtonKeys()[i] + "] To Show More";
 
                 //Ritar ut fönstret för produkten i kategorin
                 List<string> product = new List<string> { productsInCategory[i].Name, productsInCategory[i].PricePerUnit.ToString() + " SEK", pressKey };

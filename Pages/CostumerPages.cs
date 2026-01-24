@@ -59,23 +59,23 @@ namespace Webshop.Pages
                 Console.Clear();
                 switch (key.KeyChar) 
                 {
-                    case '1': //Read CartItem
+                    case '1': // Show CartItem
                         Read.ShowCartItems();
                         Console.ReadKey();
                         break;
-                    case '2': //Update amount of cart item
+                    case '2': // Update amount of cart item
                         Update.UpdateCartItem();
                         break;
-                    case '3': //Delete cart item
+                    case '3': // Delete cart item
                         Delete.DeleteCartItem();
                         break;
-                    case '4': //Checkout
+                    case '4': // Checkout
                         Create.CreateOrder();
                         break;
-                    case '8': //Go Back
+                    case '8': // Go Back
                         isRunning = false;
                         break;
-                    case '9':
+                    case '9': // Exit
                         Environment.Exit(0);
                         break;
                 }
@@ -94,8 +94,6 @@ namespace Webshop.Pages
             Console.WriteLine("[8] Go Back");
             Console.WriteLine("[9] Exit");
         }
-        
-
         public static void CartPageMenu()
         {
             Console.WriteLine("[1] Read CartItem");
@@ -105,7 +103,5 @@ namespace Webshop.Pages
             Console.WriteLine("[8] Go Back");
             Console.WriteLine("[9] Exit");
         }
-        
-
     }
 }

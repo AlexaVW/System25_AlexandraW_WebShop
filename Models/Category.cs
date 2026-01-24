@@ -12,7 +12,7 @@ namespace Webshop.Models
         public int Id { get; set; }
         public string Name { get; set; }
 
-        //En kategori kan ha många produkter
+        // One category can have many products
         public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 
         public Category(string name)

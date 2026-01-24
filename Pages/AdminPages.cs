@@ -43,10 +43,8 @@ namespace Webshop.Pages
                         case AdminMenu.Exit:
                             Environment.Exit(0);
                             break;
-                        default:
-                            Console.WriteLine("Skriv in en siffra");
-                            break;
                     }
+                    Console.Clear();
                 }
                 
             }
@@ -84,12 +82,9 @@ namespace Webshop.Pages
                         case EditProducts.Exit:
                             Environment.Exit(0);
                             break;
-                        default:
-                            Console.WriteLine("Skriv in en siffra");
-                            break;
                     }
+                    Console.Clear();
                 }
-                Console.Clear();
             }
 
 
@@ -127,12 +122,9 @@ namespace Webshop.Pages
                         case EditCategories.Exit:
                             Environment.Exit(0);
                             break;
-                        default:
-                            Console.WriteLine("Skriv in en siffra");
-                            break;
                     }
+                    Console.Clear();
                 }
-                Console.Clear();
             }
         }
         public static void PrintMenuEditOrders()
@@ -165,12 +157,9 @@ namespace Webshop.Pages
                         case EditOrders.Exit:
                             Environment.Exit(0);
                             break;
-                        default:
-                            Console.WriteLine("Skriv in en siffra");
-                            break;
                     }
+                    Console.Clear();
                 }
-                Console.Clear();
             }
         }
 
@@ -210,12 +199,10 @@ namespace Webshop.Pages
                         case ShowStatistics.Exit:
                             Environment.Exit(0);
                             break;
-                        default:
-                            Console.WriteLine("Skriv in en siffra");
-                            break;
                     }
+                    Console.Clear();
                 }
-                Console.Clear();
+                
             }
         }
     }

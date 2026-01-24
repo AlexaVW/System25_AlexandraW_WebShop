@@ -16,7 +16,8 @@ namespace Webshop.Models
         public string Supplier { get; set; }
         public bool IsOnSale { get; set; }
         public int CategoryId { get; set; } //FK
-        public Category Category { get; set; } //Gör så det är lätt att komma åt i koden
+        public Category Category { get; set; } 
+        // One product can have one category
 
         public Product(string name, double pricePerUnit, int unitsInStock, string description, string supplier, bool isOnSale, int categoryId)
         {

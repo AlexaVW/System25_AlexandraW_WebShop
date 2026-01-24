@@ -11,8 +11,11 @@ namespace Webshop.Connections
 {
     internal class Dapper
     {
+        // Search with dapper
+        
         static string connString = "data source=.\\SQLEXPRESS; initial catalog = WebShop; persist security info = True; Integrated Security = True; TrustServerCertificate=true;";
 
+        // Returns a list of products with matching search string
         public static List<Product> SearchProduct()
         {
             Console.Write("Search product: ");
@@ -30,8 +33,5 @@ namespace Webshop.Connections
             }
             return productsSearch;
         }
-        
-
-        
     }
 }
