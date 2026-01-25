@@ -142,7 +142,8 @@ namespace Webshop.Pages
                     switch ((EditOrders)num)
                     {
                         case EditOrders.View_Order_History:
-                            Read.ShowOrderHistory(new WebShopDbContext());
+                            Read.ShowOrderHistoryAndGetOrderNumber(new WebShopDbContext());
+                            //Read.ShowOrderHistory(new WebShopDbContext());
                             Console.ReadKey();
                             break;
                         case EditOrders.Update_Customer_Information:

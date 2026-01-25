@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic;
 using Webshop.Connections;
 using Webshop.Models;
 
@@ -69,8 +70,6 @@ namespace Webshop.Edit
 
                 UpdateDescription(selectedProduct, db);
 
-                UpdateDescription(selectedProduct, db);
-
                 UpdateOnSale(selectedProduct, db);
 
                 UpdateCategoryId(selectedProduct, db);
@@ -126,11 +125,6 @@ namespace Webshop.Edit
                         Console.WriteLine("Ops... Something went wrong");
                         Console.WriteLine(ex.Message);
                     }
-                }
-                else
-                {
-                    Console.WriteLine("Invalid price");
-                    Console.WriteLine("Nothing is changed");
                 }
             }
         }
@@ -208,7 +202,6 @@ namespace Webshop.Edit
                     }
                 }
             }
-
         }
 
         public static void UpdateOnSale(Product product, WebShopDbContext db)
@@ -273,13 +266,19 @@ namespace Webshop.Edit
         {
             using (var db = new WebShopDbContext())
             {
-                Read.ShowOrderHistory(db);
+                // The Order groups that are grouped by OrderDate
+                var orderGroups = Read.ShowOrderHistoryAndGetOrderNumber(db);
                 
-                Console.Write("Enter Name to change information:");
-                string selectedName = Console.ReadLine().ToUpper();
-                var selectedOrder = (from o in db.Orders
-                                            where o.CustomerName == selectedName
-                                            select o).FirstOrDefault();
+                // Choosing one of the orders. -1 because the list starts on 0
+                Console.Write("Choose order number to update information about the customer: ");
+                int selectedOrderNumber =  int.Parse(Console.ReadLine()) -1;
+
+                // Saving the selected OrderGroup
+                var selectedOrderGroup = orderGroups[selectedOrderNumber];
+
+                // One order is made for every cart item
+                // So we make it to a list incase there are more than one cart item
+                var selectedOrder = selectedOrderGroup.ToList();
                 
                 UpdateCustomerName(selectedOrder, db);
 
@@ -288,20 +287,28 @@ namespace Webshop.Edit
                 UpdateCustomerCountry(selectedOrder, db);
             }
         }
-        public static void UpdateCustomerName(Order order, WebShopDbContext db)
+        public static void UpdateCustomerName(List<Order> orders, WebShopDbContext db)
         {
-            if (order != null)
+            if (orders != null)
             {
                 Console.WriteLine();
                 Console.WriteLine("Press Enter to not change this column");
                 Console.Write("Enter new customer name: ");
                 var newCustomerName = Console.ReadLine();
+                
+                // If the string is not empty
                 if (!string.IsNullOrEmpty(newCustomerName))
                 {
                     try
                     {
-                        order.CustomerName = newCustomerName;
+                        // Looping through every order incase the customer has more than one cart item. 
+                        foreach(var order in orders)
+                        {
+                            // Updating CustomerName for every order
+                            order.CustomerName = newCustomerName;
+                        }
                         db.SaveChanges();
+
                     }
                     catch (Exception ex)
                     {
@@ -309,12 +316,11 @@ namespace Webshop.Edit
                         Console.WriteLine(ex.Message);
                     }
                 }
-
             }
         }
-        public static void UpdateCustomerAddress(Order order, WebShopDbContext db)
+        public static void UpdateCustomerAddress(List<Order> orders, WebShopDbContext db)
         {
-            if (order != null)
+            if (orders != null)
             {
                 Console.WriteLine();
                 Console.WriteLine("Press Enter to not change this column");
@@ -324,7 +330,10 @@ namespace Webshop.Edit
                 {
                     try
                     {
-                        order.ShipAdress = newAddress;
+                        foreach (var order in orders)
+                        {
+                            order.ShipAdress = newAddress;
+                        }
                         db.SaveChanges();
                     }
                     catch (Exception ex)
@@ -336,9 +345,9 @@ namespace Webshop.Edit
 
             }
         }
-        public static void UpdateCustomerCountry(Order order, WebShopDbContext db)
+        public static void UpdateCustomerCountry(List<Order> orders, WebShopDbContext db)
         {
-            if (order != null)
+            if (orders != null)
             {
                 Console.WriteLine();
                 Console.WriteLine("Press Enter to not change this column");
@@ -348,7 +357,10 @@ namespace Webshop.Edit
                 {
                     try
                     {
-                        order.ShipCountry = newCountry;
+                        foreach (var order in orders)
+                        {
+                            order.ShipCountry = newCountry;
+                        }
                         db.SaveChanges();
                     }
                     catch (Exception ex)
@@ -383,11 +395,12 @@ namespace Webshop.Edit
                 Console.WriteLine("Press [1] to Increase amount of this product");
                 Console.WriteLine("Press [2] to Decrease amount of this product");
                 int increaseOrDecrease;
-                bool validInpus = int.TryParse(Console.ReadLine(),out increaseOrDecrease);
+                bool validInput = int.TryParse(Console.ReadLine(),out increaseOrDecrease);
                 if (increaseOrDecrease == 1)
                 {
                     Console.Write("Amount to Increase: ");
-                    int numberToIncrease = int.Parse(Console.ReadLine());
+                    int numberToIncrease;
+                    bool validIncreaseInput = int.TryParse(Console.ReadLine(), out numberToIncrease);
                     try
                     {
                         cartItem.ProductAmount += numberToIncrease;
@@ -403,21 +416,27 @@ namespace Webshop.Edit
                 else if (increaseOrDecrease == 2)
                 {
                     Console.Write("Amount to Decrease: ");
-                    int numberToDecrease = int.Parse(Console.ReadLine());
+
+                    int numberToDecrease;
+                    bool validDecreaseInput= int.TryParse(Console.ReadLine(), out numberToDecrease);
                     try
                     {
+                        // Decreases the amount or product
                         cartItem.ProductAmount -= numberToDecrease;
+                        // If the amount becomes 0 the product is deleted from the cart
+                        if (cartItem.ProductAmount < 1)
+                        {
+                            db.CartItems.Remove(cartItem);
+                        }
                         db.SaveChanges();
+
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine("Ops... Something went wrong");
                         Console.WriteLine(ex.Message);
                     }
-                }
-                else
-                {
-                    Console.WriteLine("Press 1 or 2 to change amount"); //Skrivs aldrig ut
+
                 }
 
             }

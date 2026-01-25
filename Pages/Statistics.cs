@@ -89,7 +89,7 @@ namespace Webshop.Pages
                     .Include(ci => ci.product)
                     .Where(ci => ci.IsPaid == true).ToList();
 
-                // Grouping on Supplier
+                // Grouping cart items on Supplier
                 var supplierGroups = cartItems.GroupBy(ci => ci.product.Supplier).ToList();
 
                 // Order the Cart Items (that are grouped on Supplier) by decending. Calculating the sum of ProductAmount
@@ -162,7 +162,7 @@ namespace Webshop.Pages
             Console.WriteLine();
             foreach (var group in groups)
             {
-                string supplierName = group.Key;
+                string supplierName = group.Key; // supplierName = the grouping of Supplier
                 int amountProductsSold = group.Sum(ci => ci.ProductAmount);
                 double pricePerUnit = group.First().product.PricePerUnit;
                 double amountEarnedFromProducts = pricePerUnit * amountProductsSold;

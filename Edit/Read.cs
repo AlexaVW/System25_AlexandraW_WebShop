@@ -95,18 +95,32 @@ namespace Webshop.Edit
             Console.WriteLine();
         }
 
-        public static void ShowOrderHistory(WebShopDbContext db)
+        // Returns a group of DateTime on Order, used for UpdateOrder and DeleteOrder
+        public static List<IGrouping<DateTime, Order>> ShowOrderHistoryAndGetOrderNumber(WebShopDbContext db)
         {
-            var orderDateGroups = db.Orders.Include(o => o.CartItem).ThenInclude(c => c.product).GroupBy(o => o.OrderDate).ToList();
-            
-            foreach (var group in orderDateGroups)
+            // A list with orders that includes cartitem and product. Grouping on their orderdate.
+            var orderDateGroups = db.Orders
+                .Include(o => o.CartItem)
+                .ThenInclude(ci => ci.product)
+                .GroupBy(o => o.OrderDate).ToList();
+
+            // Looping through the OrderDateGroups
+            for(int i = 0; i < orderDateGroups.Count; i++)
             {
-                Console.WriteLine("ORDERDATE: " + group.Key);
+                // Giving an index for the groups so we can print Order Number
+                var group = orderDateGroups[i];
+                Console.WriteLine("Order Number: " + (i + 1));
+                Console.WriteLine("ORDERDATE: " + group.Key); // Prints one orderDate for every order
+
+                // Calculating the price for the Items in the group
                 double subTotal = group.Sum(g => g.ItemPrice);
+                
+                // So it only prints the order information once
                 bool firstRow = true;
+
                 foreach (var order in group)
                 {
-                    if (firstRow == true)
+                    if (firstRow)
                     {
                         Console.WriteLine("CustomerName: " + order.CustomerName);
                         Console.WriteLine();
@@ -116,6 +130,7 @@ namespace Webshop.Edit
                             "\n" + "Payment method: " + order.PaymentMethod);
                         firstRow = false;
                     }
+                    // Printing for every cart item
                     Console.WriteLine("CartItem Id: " + order.CartItemId +
                         "\n" + "Product name: " + order.CartItem.product.Name + " " + order.CartItem.ProductAmount + "x" +
                         "\n" + "Price: " + order.ItemPrice + " SEK");
@@ -125,8 +140,7 @@ namespace Webshop.Edit
                 Console.WriteLine("Total price for products: " + subTotal);
                 Console.WriteLine("----------------------------------");
             }
-
+            return orderDateGroups;
         }
-
     }
 }

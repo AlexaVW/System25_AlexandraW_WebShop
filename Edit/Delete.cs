@@ -105,24 +105,27 @@ namespace Webshop.Edit
 
         public static void DeleteOrder() 
         {
-            using(var db = new WebShopDbContext())
+            using (var db = new WebShopDbContext())
             {
-                Read.ShowOrderHistory(db);
-                Console.Write("Enter Name to delete order: ");
-                string selectedName = Console.ReadLine().ToUpper();
-                var selectedOrder = (from o in db.Orders
-                                   where o.CustomerName == selectedName
-                                     select o).FirstOrDefault();
+                var orderGroups = Read.ShowOrderHistoryAndGetOrderNumber(db);
+                Console.Write("Enter Order Number to delete order: ");
+                int selectedOrderNumber = int.Parse(Console.ReadLine()) -1;
+
+                var selectedOrderGroup = orderGroups[selectedOrderNumber];
+                var selectedOrder = selectedOrderGroup.ToList();
                 DeleteSelectedOrder(selectedOrder, db);
             }
         }
-        public static void DeleteSelectedOrder(Order order, WebShopDbContext db)
+        public static void DeleteSelectedOrder(List<Order> orders, WebShopDbContext db)
         {
-            if (order != null)
+            if (orders != null)
             {
                 try
                 {
-                    db.Orders.Remove(order);
+                    foreach (var order in orders)
+                    {
+                        db.Orders.Remove(order);
+                    }
                     db.SaveChanges();
                 }
                 catch (Exception ex)

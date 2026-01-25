@@ -49,7 +49,7 @@ namespace Webshop
                 DrawCategoryProductsWindows(categoryProducts);
 
                 string key = Console.ReadKey(true).KeyChar.ToString().ToUpper();
-                int productIndex = Helpers.GetButtonIndex(key); //Returnerar -1 ifall knappen inte finns som index
+                int productIndex = Helpers.GetButtonIndex(key); //Returns -1 if the button doesn't exist
                 
                 if (productIndex != -1)
                 {
@@ -70,44 +70,44 @@ namespace Webshop
         }
         public static void DrawHomePageWindows()
         {
-            //Skriver ut butikens namn
+            // Printing the name of the webshop
             List<string> shopText = new List<string> { "Teddy's Rabbit Supplies" };
             var windowTop = new Window("", 35, 1, shopText);
             windowTop.Draw();
 
-            //Skriver ut välkomsttext
+            // Printing a welcome text
             List<string> welcomeText = new List<string> { "Welcome", "to Teddy’s Rabbit Supplies", "where you can find", "quality products", "for your bunny!" };
             var windowTop1 = new Window("", 70, 5, welcomeText);
             windowTop1.Draw();
 
-            //Skriver ut Adminmenyn
+            // Printing the Admin menu
             List<string> adminMenuText = new List<string> { "[0] Admin Menu" };
             var windowsTop2 = new Window("Admin", 2, 5, adminMenuText);
             windowsTop2.Draw();
 
-            //Skriver ut kundens meny
-            List<string> costumerText = new List<string> { "[1] Shopping Page", "[2] Cart", "[9] Exit" };
-            var windowTop3 = new Window("Costumer Menu", 2, 8, costumerText);
+            // Printing the customer menu
+            List<string> customerText = new List<string> { "[1] Shopping Page", "[2] Cart", "[9] Exit" };
+            var windowTop3 = new Window("Customer Menu", 2, 8, customerText);
             windowTop3.Draw();
         }
 
         public static void DrawProductsOnSaleWindows(List<Product> productsOnSale)
         {
-            //Positioner för fönstrerna
+            // Positions for the windows
             int posTop = 15;
             int posLeft = 2;
             int padWindowProduct = 4;
 
-            //Loopar igenom produkterna som är On Sale
+            // Looping through the products on sale
             for (int i = 0; i < productsOnSale.Count; i++)
             {
-                //Ritar ut produkterna i fönster
+                // Printing the products in windows
                 string pressKey = $"Press [" + Helpers.GetButtonKeys()[i] + "] To Buy";
                 List<string> text = new List<string> { productsOnSale[i].Name, productsOnSale[i].Description, productsOnSale[i].PricePerUnit.ToString() + " SEK", pressKey };
                 var productWindow = new Window("On Sale", posLeft, posTop, text);
                 productWindow.Draw();
 
-                //Fönstrets längd beror på texternas längd
+                // The window length depends on the texts length
                 if (productsOnSale[i].Description.Length > productsOnSale[i].Name.Length)
                 {
                     posLeft += productsOnSale[i].Description.Length + padWindowProduct;
@@ -125,31 +125,30 @@ namespace Webshop
 
         public static void DrawCategoryPageMenu(List<Product> productsInCategory)
         {
-            //Skriver ut menyn
+            // Printing the menu
             List<string> menuText = new List<string> { "[8] Go Back", "[9] Exit" };
             var windowsTop = new Window("", 1, 1, menuText);
             windowsTop.Draw();
 
-            //Skriver ut det valda kategorinamnet
+            // Printing the selected category name
             List<string> CategoryName = new List<string> { productsInCategory[0].Category.Name };
             var windowTop1 = new Window("", 1, 7, CategoryName);
             windowTop1.Draw();
-
         }
 
         public static void DrawCategoryProductsWindows(List<Product> productsInCategory)
         {
-            //Positioner för fönsterna
+            // Positions for the windows
             int posLeft = 1;
             int posTop = 10;
             int padWindowProduct = 4;
 
-            //Loopar igenom listan som skickats in i metoden med alla produkter i kategorierna
+            // Looping through the list of selected products in the category
             for (int i = 0; i < productsInCategory.Count; i++)
             {
                 string pressKey = $"Press [" + Helpers.GetButtonKeys()[i] + "] To Show More";
 
-                //Ritar ut fönstret för produkten i kategorin
+                // Printing the window for a product in the category
                 List<string> product = new List<string> { productsInCategory[i].Name, productsInCategory[i].PricePerUnit.ToString() + " SEK", pressKey };
                 var productWindow = new Window("", posLeft, posTop, product);
                 productWindow.Draw();

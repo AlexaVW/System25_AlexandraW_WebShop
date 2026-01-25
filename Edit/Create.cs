@@ -185,7 +185,7 @@ namespace Webshop.Edit
                 
                 ConfirmPayment(orders, db);
 
-                ShowConfirmationText();
+                
             }
         }
         public static string ChoosePaymentMethod()
@@ -241,7 +241,8 @@ namespace Webshop.Edit
             if (pay == 1)
             {
                 // All orders in this order gets the same date
-                DateTime orderDate = DateTime.Now; 
+                DateTime orderDate = DateTime.Now;
+                string message = "";
                 foreach (Order order in orders)
                 {
                     try
@@ -249,13 +250,38 @@ namespace Webshop.Edit
                         db.Orders.Add(order);
                         order.OrderDate = orderDate;
                         var cartItemsToPay = db.CartItems.Where(c => c.IsPaid == false).Include(ci => ci.product).ToList();
-
+                        
+                        bool isInStock = true;
                         foreach (var cartItem in cartItemsToPay)
                         {
-                            cartItem.product.UnitsInStock -= cartItem.ProductAmount;
-                            cartItem.IsPaid = true;
+                            // If the amount of the product leads to it being 0 or negative in UnitsInStock, the payment stops 
+                            if (cartItem.product.UnitsInStock < cartItem.ProductAmount)
+                            {
+                                // The product is not in stock and a message with the product adds to the loop
+                                isInStock = false;
+                                message += "There are not enough of this product in stock: " + cartItem.product.Name + "\n";
+                            }
+                            else
+                            {
+                                cartItem.product.UnitsInStock -= cartItem.ProductAmount;
+                                cartItem.IsPaid = true;
+                            }
                         }
-                        db.SaveChanges();
+                        // If the product is in stock - Save changes
+                        if(isInStock == true)
+                        {
+                            db.SaveChanges();
+                            ShowConfirmationText();
+                        }
+                        else
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("Payment failed");
+                            Console.WriteLine(message);
+                            Console.WriteLine("Press any key to continue");
+                            Console.ReadKey();
+                            Console.Clear();
+                        }
                     }
                     catch (Exception ex)
                     {
