@@ -13,6 +13,7 @@ namespace Webshop.Edit
 {
     internal class Read
     {
+        // Show Categories
         public static void ShowCategories(WebShopDbContext db)
         {
             Console.WriteLine("Categories");
@@ -21,39 +22,46 @@ namespace Webshop.Edit
                 Console.WriteLine(("Id: " + category.Id).PadRight(8) + " Category name: " + category.Name);
             }
             Console.WriteLine();
-
         }
 
+        // Show Products
         public static void ShowProducts(WebShopDbContext db)
         {
-            int idLength = db.Products.Max(p => p.Id.ToString().Length) + 2;
-            int nameLength = db.Products.Max(p => p.Name.Length) + 2;
-            int priceLength = db.Products.Max(p => p.PricePerUnit.ToString().Length) + 2;
-            int stockLength = db.Products.Max(p => p.UnitsInStock.ToString().Length) + 3;
-            int descriptionLength = db.Products.Max(p => p.Description.Length) + 3;
-            int supplierLength = db.Products.Max(p => p.Supplier.Length) + 2;
-            int onSaleLength = db.Products.Max(p => p.IsOnSale.ToString().Length) + 2;
-            
-            
-            Console.WriteLine("Products");
-            foreach (var product in db.Products.ToList())
+            if (db.Products != null)
             {
-                Console.WriteLine("Id: " + product.Id.ToString().PadRight(idLength)
-                    + product.Name.PadRight(nameLength)
-                    + "Price: " + product.PricePerUnit.ToString().PadRight(priceLength)
-                    + "In stock: " + product.UnitsInStock.ToString().PadRight(stockLength) 
-                    + product.Description.PadRight(descriptionLength)
-                    + "Supplier: "+ product.Supplier.PadRight(supplierLength)
-                    + "On sale: " + product.IsOnSale.ToString().PadRight(onSaleLength) 
-                    + "Category Id: " + product.CategoryId);
+                // Getting the length of the product information
+                int idLength = db.Products.Max(p => p.Id.ToString().Length) + 2;
+                int nameLength = db.Products.Max(p => p.Name.Length) + 2;
+                int priceLength = db.Products.Max(p => p.PricePerUnit.ToString().Length) + 2;
+                int stockLength = db.Products.Max(p => p.UnitsInStock.ToString().Length) + 3;
+                int descriptionLength = db.Products.Max(p => p.Description.Length) + 3;
+                int supplierLength = db.Products.Max(p => p.Supplier.Length) + 2;
+                int onSaleLength = db.Products.Max(p => p.IsOnSale.ToString().Length) + 2;
+
+                Console.WriteLine("Products");
+                foreach (var product in db.Products.ToList())
+                {
+                    Console.WriteLine("Id: " + product.Id.ToString().PadRight(idLength)
+                        + product.Name.PadRight(nameLength)
+                        + "Price: " + product.PricePerUnit.ToString().PadRight(priceLength)
+                        + "In stock: " + product.UnitsInStock.ToString().PadRight(stockLength)
+                        + product.Description.PadRight(descriptionLength)
+                        + "Supplier: " + product.Supplier.PadRight(supplierLength)
+                        + "On sale: " + product.IsOnSale.ToString().PadRight(onSaleLength)
+                        + "Category Id: " + product.CategoryId);
+                }
+                Console.WriteLine();
             }
-            Console.WriteLine();
+            else
+            {
+                Console.WriteLine("No items found");
+            }
         }
 
         public static void ShowCartItems()
         {
             List<CartItem> cartItems = Helpers.GetCartItemsNotPaid();
-            try
+            if(cartItems.Count > 0)
             {
                 int idLength = cartItems.Max(ci => ci.Id.ToString().Length) + 2;
                 int amountLength = cartItems.Max(ci => ci.ProductAmount.ToString().Length) + 2;
@@ -72,23 +80,23 @@ namespace Webshop.Edit
                 }
                 Console.WriteLine();
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine("No item found");
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("No items found");
             }
         }
 
-
+        // Show short information about the cart items in checkout
         public static void ShowCartItemsInCheckout()
         {
             List<CartItem> cartItems = Helpers.GetCartItemsNotPaid();
             int amountLength = cartItems.Max(ci => ci.ProductAmount.ToString().Length) + 2;
             int productNameLength = cartItems.Max(ci => ci.product.Name.Length) + 2;
 
+            Console.WriteLine();
             foreach (var cartItem in cartItems)
             {
-                Console.WriteLine("Amount: " + cartItem.ProductAmount.ToString().PadRight(amountLength) 
+                Console.WriteLine("Amount: " + cartItem.ProductAmount.ToString().PadRight(amountLength)
                     + cartItem.product.Name.PadRight(productNameLength) 
                     + cartItem.product.PricePerUnit + " SEK");
             }
@@ -99,48 +107,62 @@ namespace Webshop.Edit
         public static List<IGrouping<DateTime, Order>> ShowOrderHistoryAndGetOrderNumber(WebShopDbContext db)
         {
             // A list with orders that includes cartitem and product. Grouping on their orderdate.
-            var orderDateGroups = db.Orders
-                .Include(o => o.CartItem)
-                .ThenInclude(ci => ci.product)
-                .GroupBy(o => o.OrderDate).ToList();
+            var orderDateGroups = GetOrdersGroupedByOrderDate(db);
 
-            // Looping through the OrderDateGroups
-            for(int i = 0; i < orderDateGroups.Count; i++)
+            for (int i = 0; i < orderDateGroups.Count; i++)
             {
-                // Giving an index for the groups so we can print Order Number
+                // Giving an index for the groups so it's possible to print Order Number
+                // Because there are one order per cart item it's not possible to print the orderId so we make an OrderNumber instead
                 var group = orderDateGroups[i];
                 Console.WriteLine("Order Number: " + (i + 1));
                 Console.WriteLine("ORDERDATE: " + group.Key); // Prints one orderDate for every order
 
-                // Calculating the price for the Items in the group
-                double subTotal = group.Sum(g => g.ItemPrice);
-                
-                // So it only prints the order information once
-                bool firstRow = true;
-
-                foreach (var order in group)
-                {
-                    if (firstRow)
-                    {
-                        Console.WriteLine("CustomerName: " + order.CustomerName);
-                        Console.WriteLine();
-                        Console.WriteLine("Address: " + order.ShipAdress +
-                            "\n" + "Country: " + order.ShipCountry +
-                            "\n" + "Shipping Method: " + order.ShippingMethod +
-                            "\n" + "Payment method: " + order.PaymentMethod);
-                        firstRow = false;
-                    }
-                    // Printing for every cart item
-                    Console.WriteLine("CartItem Id: " + order.CartItemId +
-                        "\n" + "Product name: " + order.CartItem.product.Name + " " + order.CartItem.ProductAmount + "x" +
-                        "\n" + "Price: " + order.ItemPrice + " SEK");
-
-                }
-                Console.WriteLine();
-                Console.WriteLine("Total price for products: " + subTotal);
-                Console.WriteLine("----------------------------------");
+                PrintOrderHistory(group);
+                PrintSubtotal(group);
             }
             return orderDateGroups;
+        }
+
+        private static List<IGrouping<DateTime, Order>> GetOrdersGroupedByOrderDate(WebShopDbContext db)
+        {
+            return db.Orders
+                .Include(o => o.CartItem)
+                .ThenInclude(ci => ci.product)
+                .GroupBy(o => o.OrderDate).ToList();
+        }
+
+        private static void PrintOrderHistory(IGrouping<DateTime, Order> group)
+        {
+            // So that it only prints the order information once
+            bool firstRow = true;
+            foreach (var order in group)
+            {
+                // Prints
+                if (firstRow)
+                {
+                    Console.WriteLine("CustomerName: " + order.CustomerName);
+                    Console.WriteLine();
+                    Console.WriteLine("Address: " + order.ShipAdress +
+                        "\n" + "Country: " + order.ShipCountry +
+                        "\n" + "Shipping Method: " + order.ShippingMethod +
+                        "\n" + "Payment method: " + order.PaymentMethod);
+                    firstRow = false;
+                }
+                // Printing for every cart item
+                Console.WriteLine("CartItem Id: " + order.CartItemId +
+                    "\n" + "Product name: " + order.CartItem.product.Name + " " + order.CartItem.ProductAmount + "x" +
+                    "\n" + "Price: " + order.ItemPrice + " SEK");
+            }
+        }
+
+        private static void PrintSubtotal(IGrouping<DateTime, Order> group)
+        {
+            // Calculating the price for the Items in the group
+            double subTotal = group.Sum(g => g.ItemPrice);
+
+            Console.WriteLine();
+            Console.WriteLine("Total price for products: " + subTotal.ToString("N2"));
+            Console.WriteLine("----------------------------------");
         }
     }
 }

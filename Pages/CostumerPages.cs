@@ -22,16 +22,17 @@ namespace Webshop.Pages
                 switch (key.KeyChar) 
                 {
                     case '1':
-                        WindowStructure.CategoryPage(Helpers.GetCategoryProducts(5));
+                        // Selecting categoryId to see the products in that category
+                        WindowStructure.CategoryPage(Helpers.GetCategoryProducts(5)); // Food
                         break;
                     case '2':
-                        WindowStructure.CategoryPage(Helpers.GetCategoryProducts(2));
+                        WindowStructure.CategoryPage(Helpers.GetCategoryProducts(2)); // Treats
                         break;
                     case '3':
-                        WindowStructure.CategoryPage(Helpers.GetCategoryProducts(3));
+                        WindowStructure.CategoryPage(Helpers.GetCategoryProducts(3)); // Toys
                         break;
                     case '4':
-                        WindowStructure.CategoryPage(Helpers.GetCategoryProducts(4));
+                        WindowStructure.CategoryPage(Helpers.GetCategoryProducts(4)); // Accessories
                         break;
                     case '5':
                         SearchPage.SearchProduct();
@@ -44,7 +45,6 @@ namespace Webshop.Pages
                         break;
                 }
                 Console.Clear();
-
             }
         }
         
@@ -70,8 +70,16 @@ namespace Webshop.Pages
                         Delete.DeleteCartItem();
                         break;
                     case '4': // Checkout
-                        Create.CreateOrder();
-                        break;
+                        if (Helpers.GetCartItemsNotPaid().Count >= 1)
+                        {
+                            Create.CreateOrder();
+                        }
+                        else
+                        {
+                            Console.WriteLine("You have no items in your cart");
+                            Console.ReadKey();
+                        }
+                            break;
                     case '8': // Go Back
                         isRunning = false;
                         break;

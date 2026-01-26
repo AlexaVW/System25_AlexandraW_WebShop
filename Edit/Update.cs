@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,21 +13,21 @@ namespace Webshop.Edit
 {
     internal class Update
     {
+        // Update category (Admin)
         public static void UpdateCategory()
         {
             using (var db = new WebShopDbContext())
             {
                 Read.ShowCategories(db);
                 Console.WriteLine("Enter Id:");
-                int selectedId;
-                bool validIdInput = int.TryParse(Console.ReadLine(), out selectedId);
+                bool validIdInput = int.TryParse(Console.ReadLine(), out int selectedId);
                 var selectedCategory = (from c in db.Categories
                                          where c.Id == selectedId
                                          select c).SingleOrDefault();
                 UpdateCategoryName(selectedCategory, db);
             }
         }
-        public static void UpdateCategoryName(Category category, WebShopDbContext db)
+        private static void UpdateCategoryName(Category category, WebShopDbContext db)
         {
             if (category != null)
             {
@@ -50,6 +51,7 @@ namespace Webshop.Edit
             }
         }
 
+        // Update product (Admin)
         public static void UpdateProduct()
         {
             using (var db = new WebShopDbContext())
@@ -62,6 +64,7 @@ namespace Webshop.Edit
                 var selectedProduct = (from p in db.Products
                                        where p.Id == selectedId
                                        select p).SingleOrDefault();
+                
                 UpdateProductName(selectedProduct, db);
 
                 UpdateProductPrice(selectedProduct, db);
@@ -70,13 +73,15 @@ namespace Webshop.Edit
 
                 UpdateDescription(selectedProduct, db);
 
+                UpdateSupplier(selectedProduct, db);
+
                 UpdateOnSale(selectedProduct, db);
 
                 UpdateCategoryId(selectedProduct, db);
             }
         }
 
-        public static void UpdateProductName(Product product, WebShopDbContext db)
+        private static void UpdateProductName(Product product, WebShopDbContext db)
         {
             if (product != null)
             {
@@ -100,10 +105,9 @@ namespace Webshop.Edit
                     }
                 }
             }
-
         }
 
-        public static void UpdateProductPrice(Product product, WebShopDbContext db)
+        private static void UpdateProductPrice(Product product, WebShopDbContext db)
         {
             if (product != null)
             {
@@ -113,6 +117,7 @@ namespace Webshop.Edit
 
                 bool validInput = double.TryParse(Console.ReadLine(), out double newPricePerUnit) && newPricePerUnit > 0;
 
+                // If input is not valid - nothing will change
                 if (validInput)
                 {
                     try
@@ -128,7 +133,7 @@ namespace Webshop.Edit
                 }
             }
         }
-        public static void UpdateUnitsInStock(Product product, WebShopDbContext db)
+        private static void UpdateUnitsInStock(Product product, WebShopDbContext db)
         {
             if (product != null)
             {
@@ -153,7 +158,7 @@ namespace Webshop.Edit
             }
         }
 
-        public static void UpdateDescription(Product product, WebShopDbContext db)
+        private static void UpdateDescription(Product product, WebShopDbContext db)
         {
             if (product != null)
             {
@@ -162,6 +167,7 @@ namespace Webshop.Edit
                 Console.Write("Enter a description: ");
                 string newDescription = Console.ReadLine();
 
+                // If input is null or empty string - Nothing will change
                 if (!string.IsNullOrEmpty(newDescription))
                 {
                     try
@@ -178,9 +184,8 @@ namespace Webshop.Edit
             }
 
         }
-        public static void UpdateSupplier(Product product, WebShopDbContext db)
+        private static void UpdateSupplier(Product product, WebShopDbContext db)
         {
-
             if (product != null)
             {
                 Console.WriteLine();
@@ -204,7 +209,7 @@ namespace Webshop.Edit
             }
         }
 
-        public static void UpdateOnSale(Product product, WebShopDbContext db)
+        private static void UpdateOnSale(Product product, WebShopDbContext db)
         {
             if (product != null)
             {
@@ -216,26 +221,33 @@ namespace Webshop.Edit
                 string onSaleString = Console.ReadLine();
                 if (!string.IsNullOrEmpty(onSaleString))
                 {
-                    int onSale = int.Parse(onSaleString);
-                    if (onSale == 1)
+                    try
                     {
-                        newIsOnSale = true;
-                        try
+                        int onSale = int.Parse(onSaleString);
+                        if (onSale == 1)
                         {
-                            product.IsOnSale = newIsOnSale;
-                            db.SaveChanges();
+                            
+                            newIsOnSale = true;
                         }
-                        catch (Exception ex)
+                        else if (onSale == 2)
                         {
-                            Console.WriteLine("Ops... Something went wrong");
-                            Console.WriteLine(ex.Message);
+                            newIsOnSale = false;
                         }
+
+                        product.IsOnSale = newIsOnSale;
+                        db.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Ops... Something went wrong");
+                        Console.WriteLine("This Update won't be saved");
+                        Console.WriteLine(ex.Message);
                     }
                 }
             }
         }
 
-        public static void UpdateCategoryId(Product product, WebShopDbContext db)
+        private static void UpdateCategoryId(Product product, WebShopDbContext db)
         {
             if (product != null)
             {
@@ -261,7 +273,7 @@ namespace Webshop.Edit
             }
         }
 
-
+        // Update Customer information (Admin)
         public static void UpdateCustomerInformation()
         {
             using (var db = new WebShopDbContext())
@@ -271,23 +283,32 @@ namespace Webshop.Edit
                 
                 // Choosing one of the orders. -1 because the list starts on 0
                 Console.Write("Choose order number to update information about the customer: ");
-                int selectedOrderNumber =  int.Parse(Console.ReadLine()) -1;
+                bool validInput = int.TryParse(Console.ReadLine(), out int selectedOrderNumber) && selectedOrderNumber <= orderGroups.Count;
+                selectedOrderNumber -= 1;
 
-                // Saving the selected OrderGroup
-                var selectedOrderGroup = orderGroups[selectedOrderNumber];
+                if (validInput)
+                {
+                    // Saving the selected OrderGroup
+                    var selectedOrderGroup = orderGroups[selectedOrderNumber];
 
-                // One order is made for every cart item
-                // So we make it to a list incase there are more than one cart item
-                var selectedOrder = selectedOrderGroup.ToList();
-                
-                UpdateCustomerName(selectedOrder, db);
+                    // (One order is made for every cart item)
+                    // Making it to a list incase there are more than one order
+                    var selectedOrder = selectedOrderGroup.ToList();
 
-                UpdateCustomerAddress(selectedOrder, db);
+                    UpdateCustomerName(selectedOrder, db);
 
-                UpdateCustomerCountry(selectedOrder, db);
+                    UpdateCustomerAddress(selectedOrder, db);
+
+                    UpdateCustomerCountry(selectedOrder, db);
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input");
+                }
             }
         }
-        public static void UpdateCustomerName(List<Order> orders, WebShopDbContext db)
+
+        private static void UpdateCustomerName(List<Order> orders, WebShopDbContext db)
         {
             if (orders != null)
             {
@@ -308,7 +329,6 @@ namespace Webshop.Edit
                             order.CustomerName = newCustomerName;
                         }
                         db.SaveChanges();
-
                     }
                     catch (Exception ex)
                     {
@@ -318,7 +338,7 @@ namespace Webshop.Edit
                 }
             }
         }
-        public static void UpdateCustomerAddress(List<Order> orders, WebShopDbContext db)
+        private static void UpdateCustomerAddress(List<Order> orders, WebShopDbContext db)
         {
             if (orders != null)
             {
@@ -345,7 +365,7 @@ namespace Webshop.Edit
 
             }
         }
-        public static void UpdateCustomerCountry(List<Order> orders, WebShopDbContext db)
+        private static void UpdateCustomerCountry(List<Order> orders, WebShopDbContext db)
         {
             if (orders != null)
             {
@@ -369,9 +389,10 @@ namespace Webshop.Edit
                         Console.WriteLine(ex.Message);
                     }
                 }
-
             }
         }
+        
+        // Update CartItem (Customer)
         public static void UpdateCartItem()
         {
             using (var db = new WebShopDbContext())
@@ -379,8 +400,7 @@ namespace Webshop.Edit
                 Read.ShowCartItems();
 
                 Console.WriteLine("Choose Id to change amount of product");
-                int selectedId;
-                bool validIdInput = int.TryParse(Console.ReadLine(), out selectedId);
+                bool validIdInput = int.TryParse(Console.ReadLine(), out int selectedId);
                 var selectedCartItem = (from c in db.CartItems
                                         where c.Id == selectedId
                                         select c).SingleOrDefault();
@@ -388,14 +408,14 @@ namespace Webshop.Edit
             }
         }
 
-        public static void UpdateCartItemAmount(CartItem cartItem, WebShopDbContext db)
+        // Update CartItem Amount (Customer)
+        private static void UpdateCartItemAmount(CartItem cartItem, WebShopDbContext db)
         {
             if (cartItem != null)
             {
                 Console.WriteLine("Press [1] to Increase amount of this product");
                 Console.WriteLine("Press [2] to Decrease amount of this product");
-                int increaseOrDecrease;
-                bool validInput = int.TryParse(Console.ReadLine(),out increaseOrDecrease);
+                bool validInput = int.TryParse(Console.ReadLine(),out int increaseOrDecrease);
                 if (increaseOrDecrease == 1)
                 {
                     Console.Write("Amount to Increase: ");
@@ -421,7 +441,7 @@ namespace Webshop.Edit
                     bool validDecreaseInput= int.TryParse(Console.ReadLine(), out numberToDecrease);
                     try
                     {
-                        // Decreases the amount or product
+                        // Decreases the amount of product
                         cartItem.ProductAmount -= numberToDecrease;
                         // If the amount becomes 0 the product is deleted from the cart
                         if (cartItem.ProductAmount < 1)
@@ -429,18 +449,14 @@ namespace Webshop.Edit
                             db.CartItems.Remove(cartItem);
                         }
                         db.SaveChanges();
-
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine("Ops... Something went wrong");
                         Console.WriteLine(ex.Message);
                     }
-
                 }
-
             }
         }
-
     }
 }

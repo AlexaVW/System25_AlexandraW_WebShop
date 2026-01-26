@@ -17,7 +17,7 @@ namespace Webshop
         public static void HomePage()
         {
             DrawHomePageWindows();
-            List<Product> productsOnSale = Helpers.GetProductsOnSale();
+            List<Product> productsOnSale = Helpers.GetProductsOnSale(3);
 
             DrawProductsOnSaleWindows(productsOnSale);
             string key = Console.ReadKey(true).KeyChar.ToString().ToUpper();

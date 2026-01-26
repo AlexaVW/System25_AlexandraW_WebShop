@@ -11,6 +11,7 @@ namespace Webshop.Pages
 {
     internal class Statistics
     {
+        // Statistics (Admin)
         public static void GetBestSellingProducts()
         {
             using (var db = new Connections.WebShopDbContext())
@@ -131,7 +132,7 @@ namespace Webshop.Pages
             foreach (var group in groups)
             {
                 string categoryName = group.First().product.Category.Name;
-                int amountSold = group.Sum(ci => ci.ProductAmount); //Summera gruppens productAmount
+                int amountSold = group.Sum(ci => ci.ProductAmount);
 
                 Console.WriteLine($"Category: {categoryName}");
                 Console.WriteLine($"Amount sold: {amountSold}");

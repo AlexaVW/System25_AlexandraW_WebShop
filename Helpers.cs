@@ -16,14 +16,13 @@ namespace Webshop
 {
     internal class Helpers
     {
-        public static List<Product> GetProductsOnSale()
+        // Getting products on sale
+        public static List<Product> GetProductsOnSale(int amount)
         {
-            List<Product> productsOnSale = new List<Product>();
             using (var db = new WebShopDbContext())
             {
-                productsOnSale = db.Products.Where(p => p.IsOnSale == true).ToList();
+                return db.Products.Where(p => p.IsOnSale == true).Take(amount).ToList();
             }
-            return productsOnSale;
         }
 
         // Gets the categories with their products in based on selected Id
@@ -146,20 +145,22 @@ namespace Webshop
             //return value;
         }
 
-        public static void AddProductToCart(List<Product> productsOnSale, string selectedChar)
+        // Adding product to cart when there are more than one to choose from
+        public static void AddProductToCart(List<Product> products, string selectedChar)
         {
             int selectedProduct = Helpers.GetButtonIndex(selectedChar); // Gets the value Q = 0, W = 1, E = 2 for example
 
             // Adding the selected product to cart
-            if (selectedProduct >= 0 && selectedProduct < productsOnSale.Count)
+            if (selectedProduct >= 0 && selectedProduct < products.Count)
             {
-                Create.CreateCartItem(productsOnSale[selectedProduct]);
-                Console.WriteLine("Added " + productsOnSale[selectedProduct].Name + " to cart");
+                Create.CreateCartItem(products[selectedProduct]);
+                Console.WriteLine("Added " + products[selectedProduct].Name + " to cart");
                 Console.WriteLine("Press any key to continue");
                 Console.ReadKey(true);
             }
         }
 
+        // Calculating CartItems price in checkout
         public static double CalculateAllCartItemsPrice()
         {
             double totalPrice = 0;
@@ -174,6 +175,7 @@ namespace Webshop
             }
         }
 
+        // Calculating tax
         public static double CalculateTax(double price)
         {
             double calculatedTax = 0;
@@ -182,6 +184,7 @@ namespace Webshop
             return calculatedTax;
         }
 
+        // Getting CartItems not paid
         public static List<CartItem> GetCartItemsNotPaid() 
         {
             List<CartItem> cartItemsNotPaid = new List<CartItem>();

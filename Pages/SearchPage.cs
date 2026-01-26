@@ -11,9 +11,12 @@ namespace Webshop.Pages
 {
     internal class SearchPage
     {
+        // Search product (Customer)
         public static void SearchProduct()
         {
             Console.WriteLine("Search Page");
+            
+            // Getting the connection from Dapper
             var productsSearch = Connections.Dapper.SearchProduct();
             Console.WriteLine();
             for (int i = 0; i < productsSearch.Count; i++)

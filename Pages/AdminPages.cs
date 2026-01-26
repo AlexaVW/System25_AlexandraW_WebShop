@@ -203,7 +203,6 @@ namespace Webshop.Pages
                     }
                     Console.Clear();
                 }
-                
             }
         }
     }

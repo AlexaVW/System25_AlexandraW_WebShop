@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using Webshop.Models;
 
 namespace Webshop.Connections
@@ -13,8 +14,16 @@ namespace Webshop.Connections
     {
         // Search with dapper
         
-        static string connString = "data source=.\\SQLEXPRESS; initial catalog = WebShop; persist security info = True; Integrated Security = True; TrustServerCertificate=true;";
+        static string connString = GetConnstring();
 
+        private static string GetConnstring()
+        {
+            var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
+
+            var connStr = config["MySettings:ConnectionStringLocal"]; 
+            return connStr;
+        }
+        
         // Returns a list of products with matching search string
         public static List<Product> SearchProduct()
         {
