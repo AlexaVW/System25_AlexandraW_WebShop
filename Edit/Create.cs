@@ -217,7 +217,8 @@ namespace Webshop.Edit
         public static void ContinueToPay(List<Order> orders, int shippingCost)
         {
             Console.WriteLine("Press [1] to continue");
-            int pay = int.Parse(Console.ReadLine());
+            int pay;
+            bool validInput = int.TryParse(Console.ReadLine(), out pay); 
             if (pay == 1)
             {
                 Console.Clear();
@@ -234,72 +235,70 @@ namespace Webshop.Edit
 
         public static void ConfirmPayment(List<Order> orders, WebShopDbContext db)
         {
+            //var myOrders = db.Orders.Where(o => o.CartItem.IsPaid == false).Include(o => o.CartItem).ThenInclude(c => c.product);
             Console.WriteLine("Press [1] to pay");
             int pay;
             bool validInput = int.TryParse(Console.ReadLine(), out pay);
 
             if (pay == 1)
             {
-                // All orders in this order gets the same date
-                DateTime orderDate = DateTime.Now;
                 string message = "";
-                foreach (Order order in orders)
+                bool isInStock = true;
+                try
                 {
-                    try
+                    // All orders in this order gets the same date
+                    DateTime orderDate = DateTime.Now;
+
+                    // Looping through one order per cart item
+                    foreach (Order order in orders) 
                     {
+                        //Adding order to the database
                         db.Orders.Add(order);
-                        order.OrderDate = orderDate;
-                        var cartItemsToPay = db.CartItems.Where(c => c.IsPaid == false).Include(ci => ci.product).ToList();
                         
-                        bool isInStock = true;
-                        foreach (var cartItem in cartItemsToPay)
+                        // Setting todays orderDate
+                        order.OrderDate = orderDate;
+                        
+                        // Need to get the cart items where cart item id are the same as order.CartItemId. Need to include cartitem.product.
+                        // Because the order is not in the database yet
+                        var cartItem = db.CartItems.Where(c => c.Id == order.CartItemId).Include(c => c.product).SingleOrDefault();
+
+                        // If the amount of the product is more than units in stock - Payment failed
+                        if (order.CartItem.ProductAmount > cartItem.product.UnitsInStock)
                         {
-                            // If the amount of the product leads to it being 0 or negative in UnitsInStock, the payment stops 
-                            if (cartItem.product.UnitsInStock < cartItem.ProductAmount)
-                            {
-                                // The product is not in stock and a message with the product adds to the loop
-                                isInStock = false;
-                                message += "There are not enough of this product in stock: " + cartItem.product.Name + "\n";
-                            }
-                            else
-                            {
-                                cartItem.product.UnitsInStock -= cartItem.ProductAmount;
-                                cartItem.IsPaid = true;
-                            }
-                        }
-                        // If the product is in stock - Save changes
-                        if(isInStock == true)
-                        {
-                            db.SaveChanges();
-                            ShowConfirmationText();
+                            isInStock = false;
+                            message += "There are not enough of this product in stock: " + order.CartItem.product.Name + "\n";
                         }
                         else
                         {
-                            Console.WriteLine();
-                            Console.WriteLine("Payment failed");
-                            Console.WriteLine(message);
-                            Console.WriteLine("Press any key to continue");
-                            Console.ReadKey();
-                            Console.Clear();
+                            // If there are enough products in stock - Units in stock decreases with amount of product and the cartitem is paid
+                            order.CartItem.product.UnitsInStock -= order.CartItem.ProductAmount;
+                            order.CartItem.IsPaid = true;
                         }
+
                     }
-                    catch (Exception ex)
+                    // If the product is in stock - Save changes
+                    if (isInStock == true)
                     {
-                        Console.WriteLine("Ops... Something went wrong");
-                        Console.WriteLine(ex.Message);
+                        db.SaveChanges();
+                        message = "Your payment is done";
                     }
+
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Ops... Something went wrong");
+                    Console.WriteLine(ex.Message);
+                }
+                Console.WriteLine();
+                Console.WriteLine(message); // message depends on if the payment went through or not
+                Console.WriteLine("Press any key to continue");
+                Console.ReadKey();
+                Console.Clear();
+                WindowStructure.HomePage();
             }
         }
 
-        public static void ShowConfirmationText()
-        {
-            Console.WriteLine("Your payment is done. Welcome back.");
-            Console.WriteLine("Press any key");
-            Console.ReadKey();
-            Console.Clear();
-            WindowStructure.HomePage();
-        }
+        
 
         public static List<Order> AddOrderToList(string name, string address, string country, string shippingMethod, string paymentMethod, WebShopDbContext db, List<CartItem> cartItems)
         {
