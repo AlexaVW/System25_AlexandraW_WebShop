@@ -177,6 +177,7 @@ namespace Webshop.Edit
                 ShowCheckoutInformation(paymentMethod, totalCartPrice, shippingCost);
                 
                 // Adding the order to a list to send it to the next method
+                // The list contains the list of CartItems
                 List<Order> orders = AddOrderToList(name, address, country, shippingMethod, paymentMethod, db, cartItemsNotPaid);
 
                 ContinueToPay(orders, shippingCost);
@@ -255,8 +256,9 @@ namespace Webshop.Edit
                 {
                     // All orders in this order gets the same date
                     DateTime orderDate = DateTime.Now;
-
-                    // Looping through one order per cart item
+                    
+                    // Looping through the list of orders that contains a list of cart items
+                    // Adding one order per cart item
                     foreach (Order order in orders) 
                     {
                         // Adding order to the database
@@ -267,7 +269,7 @@ namespace Webshop.Edit
                         
                         // Need to get the cart items where cart item id are the same as order.CartItemId. Need to include cartitem.product,
                         // because the order is not in the database yet
-                        var cartItem = db.CartItems.Where(c => c.Id == order.CartItemId).Include(c => c.product).SingleOrDefault();
+                        var cartItem = db.CartItems.Where(ci => ci.Id == order.CartItemId).Include(ci => ci.product).SingleOrDefault();
 
                         // If the amount of the product is more than units in stock - Payment failed
                         if (order.CartItem.ProductAmount > cartItem.product.UnitsInStock)

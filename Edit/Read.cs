@@ -106,7 +106,7 @@ namespace Webshop.Edit
         // Returns a group of DateTime on Order, used for UpdateOrder and DeleteOrder
         public static List<IGrouping<DateTime, Order>> ShowOrderHistoryAndGetOrderNumber(WebShopDbContext db)
         {
-            Console.Write("\x1b[3J\x1b[H\x1b[2J"); //Clears console propperly. To much text outside of window view
+            Console.Write("\x1b[3J\x1b[H\x1b[2J"); //Clears console properly. Too much text outside of window view
             Console.Clear();
 
             // A list with orders that includes cartitem and product. Grouping on their orderdate.
