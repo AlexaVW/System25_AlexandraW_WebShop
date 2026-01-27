@@ -343,7 +343,7 @@ namespace Webshop.Edit
                             // Updating CustomerName for every order
                             order.CustomerName = newCustomerName;
                         }
-
+                        // Updating the whole list of orders
                         db.UpdateRange(orders);
 
                         db.SaveChanges();

@@ -18,7 +18,7 @@ namespace Webshop.Pages
             {
                 foreach (int i in Enum.GetValues(typeof(AdminMenu)))
                 {
-                    Console.WriteLine(i + ". " + Enum.GetName(typeof(AdminMenu), i).Replace('_', ' '));
+                    Console.WriteLine("[" + i + "] " + Enum.GetName(typeof(AdminMenu), i).Replace('_', ' '));
                 }
                 if(int.TryParse(Console.ReadKey(true).KeyChar.ToString(), out int num))
                 {
@@ -44,9 +44,10 @@ namespace Webshop.Pages
                             Environment.Exit(0);
                             break;
                     }
-                    Console.Clear();
+                    
                 }
-                
+                Console.Clear();
+
             }
         }
         public static void PrintMenuEditProducts()
@@ -56,7 +57,7 @@ namespace Webshop.Pages
             {
                 foreach (int i in Enum.GetValues(typeof(EditProducts)))
                 {
-                    Console.WriteLine(i + ". " + Enum.GetName(typeof(EditProducts), i).Replace('_', ' '));
+                    Console.WriteLine("[" + i + "] " + Enum.GetName(typeof(EditProducts), i).Replace('_', ' '));
                 }
                 if (int.TryParse(Console.ReadKey(true).KeyChar.ToString(), out int num))
                 {
@@ -83,11 +84,10 @@ namespace Webshop.Pages
                             Environment.Exit(0);
                             break;
                     }
-                    Console.Clear();
+                    
                 }
+                Console.Clear();
             }
-
-
         }
         public static void PrintMenuEditCategories()
         {
@@ -96,7 +96,7 @@ namespace Webshop.Pages
             {
                 foreach (int i in Enum.GetValues(typeof(EditCategories)))
                 {
-                    Console.WriteLine(i + ". " + Enum.GetName(typeof(EditCategories), i).Replace('_', ' '));
+                    Console.WriteLine("[" + i + "] " + Enum.GetName(typeof(EditCategories), i).Replace('_', ' '));
                 }
                 if (int.TryParse(Console.ReadKey(true).KeyChar.ToString(), out int num))
                 {
@@ -125,6 +125,8 @@ namespace Webshop.Pages
                     }
                     Console.Clear();
                 }
+                Console.Write("\x1b[3J\x1b[H\x1b[2J"); //Clears console properly. Too much text outside of window view
+                Console.Clear();
             }
         }
         public static void PrintMenuEditOrders()
@@ -134,7 +136,7 @@ namespace Webshop.Pages
             {
                 foreach (int i in Enum.GetValues(typeof(EditOrders)))
                 {
-                    Console.WriteLine(i + ". " + Enum.GetName(typeof(EditOrders), i).Replace('_', ' '));
+                    Console.WriteLine("[" + i + "] " + Enum.GetName(typeof(EditOrders), i).Replace('_', ' '));
                 }
                 if (int.TryParse(Console.ReadKey(true).KeyChar.ToString(), out int num))
                 {
@@ -143,14 +145,19 @@ namespace Webshop.Pages
                     {
                         case EditOrders.View_Order_History:
                             Read.ShowOrderHistoryAndGetOrderNumber(new WebShopDbContext());
-                            //Read.ShowOrderHistory(new WebShopDbContext());
                             Console.ReadKey();
+                            Console.Write("\x1b[3J\x1b[H\x1b[2J"); //Clears console properly. Too much text outside of window view
+                            Console.Clear();
                             break;
                         case EditOrders.Update_Customer_Information:
                             Update.UpdateCustomerInformation();
+                            Console.Write("\x1b[3J\x1b[H\x1b[2J"); //Clears console properly. Too much text outside of window view
+                            Console.Clear();
                             break;
                         case EditOrders.Delete_Order:
                             Delete.DeleteOrder();
+                            Console.Write("\x1b[3J\x1b[H\x1b[2J"); //Clears console properly. Too much text outside of window view
+                            Console.Clear();
                             break;
                         case EditOrders.Go_Back:
                             isRunning = false;
@@ -159,8 +166,9 @@ namespace Webshop.Pages
                             Environment.Exit(0);
                             break;
                     }
-                    Console.Clear();
                 }
+                Console.Write("\x1b[3J\x1b[H\x1b[2J"); //Clears console properly. Too much text outside of window view
+                Console.Clear();
             }
         }
 
@@ -171,7 +179,7 @@ namespace Webshop.Pages
             {
                 foreach (int i in Enum.GetValues(typeof(ShowStatistics)))
                 {
-                    Console.WriteLine(i + ". " + Enum.GetName(typeof(ShowStatistics), i).Replace('_', ' '));
+                    Console.WriteLine("[" + i + "] " + Enum.GetName(typeof(ShowStatistics), i).Replace('_', ' '));
                 }
                 if (int.TryParse(Console.ReadKey(true).KeyChar.ToString(), out int num))
                 {
@@ -201,8 +209,8 @@ namespace Webshop.Pages
                             Environment.Exit(0);
                             break;
                     }
-                    Console.Clear();
                 }
+                Console.Clear();
             }
         }
     }

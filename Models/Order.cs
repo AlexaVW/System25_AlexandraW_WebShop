@@ -18,7 +18,7 @@ namespace Webshop.Models
         public double ItemPrice { get; set; }
         public int CartItemId { get; set; } // FK
 
-        // One cart item have one order
+        // One order can have one cartitem
         public CartItem CartItem { get; set; }
 
         public Order(string customerName, string shipAdress, string shipCountry, string shippingMethod, string paymentMethod, double itemPrice, int cartItemId)

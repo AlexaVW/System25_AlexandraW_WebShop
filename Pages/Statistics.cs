@@ -68,7 +68,7 @@ namespace Webshop.Pages
                     .Where(ci => ci.IsPaid == true).ToList();
 
                 // Gets products that has the string "Hay" in product name. Grouping by ProductId
-                var productGroups = cartItems.Where(ci => ci.product.Name.Contains("Hay")).GroupBy(ci => ci.ProductId);
+                var productGroups = cartItems.Where(ci => ci.product.Name.Contains("Hay") && ci.product.Category.Name == "Food").GroupBy(ci => ci.ProductId);
 
                 // Order the Cart Items (that are grouped on ProductId) by decending. Calculating the sum of ProductAmount.
                 productGroups = productGroups.OrderByDescending(group => group.Sum(ci => ci.ProductAmount));

@@ -106,22 +106,32 @@ namespace Webshop.Edit
         // Returns a group of DateTime on Order, used for UpdateOrder and DeleteOrder
         public static List<IGrouping<DateTime, Order>> ShowOrderHistoryAndGetOrderNumber(WebShopDbContext db)
         {
+            Console.Write("\x1b[3J\x1b[H\x1b[2J"); //Clears console propperly. To much text outside of window view
+            Console.Clear();
+
             // A list with orders that includes cartitem and product. Grouping on their orderdate.
             var orderDateGroups = db.Orders
                 .Include(o => o.CartItem)
                 .ThenInclude(ci => ci.product)
                 .GroupBy(o => o.OrderDate).ToList();
-            
+
+            // Declaring an index that are used for OrderNumber.
+            // (Can't use orderId because there are one order per cart item with different OrderIds)
             int index = 0;
+            // For each orderGroup (that are grouped on Date)
             foreach (var dateGroup in orderDateGroups)
             {
+                Console.WriteLine("ORDERDATE: " + dateGroup.Key);
+                Console.WriteLine("Order Number: " + (index + 1) + "\n");
+
+                // Calculating the price for all the items in the group
                 double subTotal = dateGroup.Sum(o => o.ItemPrice);
-                Console.WriteLine("Order Number: " + (index + 1));
-                Console.WriteLine("ORDERDATE: " + dateGroup.Key + "\n");
 
                 bool firstRow = true;
-                foreach(var item in dateGroup)
+                // For each cartitem in dateGroup
+                foreach (var item in dateGroup)
                 {
+                    // Printing one time
                     if (firstRow)
                     {
                         Console.WriteLine(item.CustomerName);
@@ -130,11 +140,15 @@ namespace Webshop.Edit
                         Console.WriteLine();
                         firstRow = false;
                     }
-                    Console.WriteLine("Product: " + item.CartItem.product.Name + " PricePerUnit: " + item.CartItem.product.PricePerUnit + " SEK" + " Amount: " + item.CartItem.ProductAmount);
+                    // Printing for every cartitem
+                    Console.WriteLine("Product: " + item.CartItem.product.Name +
+                        ", PricePerUnit: " + item.CartItem.product.PricePerUnit + " SEK" +
+                        ", Amount: " + item.CartItem.ProductAmount + "x");
 
                 }
-                Console.WriteLine("\nSubTotal for products: "+ subTotal.ToString("N2") + " SEK");
+                Console.WriteLine("\nSubTotal for products: " + subTotal.ToString("N2") + " SEK");
                 Console.WriteLine("------------------------------------------------------------");
+
                 index++;
             }
             return orderDateGroups;
