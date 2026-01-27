@@ -136,10 +136,7 @@ namespace Webshop.Edit
             {
                 try
                 {
-                    foreach (var order in orders)
-                    {
-                        db.Orders.Remove(order);
-                    }
+                    db.Orders.RemoveRange(orders);
                     db.SaveChanges();
                 }
                 catch (Exception ex)

@@ -23,7 +23,7 @@ namespace Webshop.Pages
                 {
                     case '1':
                         // Selecting categoryId to see the products in that category
-                        WindowStructure.CategoryPage(Helpers.GetCategoryProducts(5)); // Food
+                        WindowStructure.CategoryPage(Helpers.GetCategoryProducts(1)); // Food
                         break;
                     case '2':
                         WindowStructure.CategoryPage(Helpers.GetCategoryProducts(2)); // Treats

@@ -131,9 +131,13 @@ namespace Webshop
             windowsTop.Draw();
 
             // Printing the selected category name
-            List<string> CategoryName = new List<string> { productsInCategory[0].Category.Name };
-            var windowTop1 = new Window("", 1, 7, CategoryName);
-            windowTop1.Draw();
+            if(productsInCategory.Count > 0)
+            {
+                List<string> CategoryName = new List<string> { productsInCategory[0].Category.Name };
+                var windowTop1 = new Window("", 1, 7, CategoryName);
+                windowTop1.Draw();
+            }
+            
         }
 
         public static void DrawCategoryProductsWindows(List<Product> productsInCategory)

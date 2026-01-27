@@ -27,7 +27,7 @@ namespace Webshop.Edit
         // Show Products
         public static void ShowProducts(WebShopDbContext db)
         {
-            if (db.Products != null)
+            if (db.Products.ToList().Count > 0)
             {
                 // Getting the length of the product information
                 int idLength = db.Products.Max(p => p.Id.ToString().Length) + 2;
@@ -107,62 +107,37 @@ namespace Webshop.Edit
         public static List<IGrouping<DateTime, Order>> ShowOrderHistoryAndGetOrderNumber(WebShopDbContext db)
         {
             // A list with orders that includes cartitem and product. Grouping on their orderdate.
-            var orderDateGroups = GetOrdersGroupedByOrderDate(db);
-
-            for (int i = 0; i < orderDateGroups.Count; i++)
-            {
-                // Giving an index for the groups so it's possible to print Order Number
-                // Because there are one order per cart item it's not possible to print the orderId so we make an OrderNumber instead
-                var group = orderDateGroups[i];
-                Console.WriteLine("Order Number: " + (i + 1));
-                Console.WriteLine("ORDERDATE: " + group.Key); // Prints one orderDate for every order
-
-                PrintOrderHistory(group);
-                PrintSubtotal(group);
-            }
-            return orderDateGroups;
-        }
-
-        private static List<IGrouping<DateTime, Order>> GetOrdersGroupedByOrderDate(WebShopDbContext db)
-        {
-            return db.Orders
+            var orderDateGroups = db.Orders
                 .Include(o => o.CartItem)
                 .ThenInclude(ci => ci.product)
                 .GroupBy(o => o.OrderDate).ToList();
-        }
-
-        private static void PrintOrderHistory(IGrouping<DateTime, Order> group)
-        {
-            // So that it only prints the order information once
-            bool firstRow = true;
-            foreach (var order in group)
+            
+            int index = 0;
+            foreach (var dateGroup in orderDateGroups)
             {
-                // Prints
-                if (firstRow)
+                double subTotal = dateGroup.Sum(o => o.ItemPrice);
+                Console.WriteLine("Order Number: " + (index + 1));
+                Console.WriteLine("ORDERDATE: " + dateGroup.Key + "\n");
+
+                bool firstRow = true;
+                foreach(var item in dateGroup)
                 {
-                    Console.WriteLine("CustomerName: " + order.CustomerName);
-                    Console.WriteLine();
-                    Console.WriteLine("Address: " + order.ShipAdress +
-                        "\n" + "Country: " + order.ShipCountry +
-                        "\n" + "Shipping Method: " + order.ShippingMethod +
-                        "\n" + "Payment method: " + order.PaymentMethod);
-                    firstRow = false;
+                    if (firstRow)
+                    {
+                        Console.WriteLine(item.CustomerName);
+                        Console.WriteLine(item.ShipAdress);
+                        Console.WriteLine(item.ShipCountry);
+                        Console.WriteLine();
+                        firstRow = false;
+                    }
+                    Console.WriteLine("Product: " + item.CartItem.product.Name + " PricePerUnit: " + item.CartItem.product.PricePerUnit + " SEK" + " Amount: " + item.CartItem.ProductAmount);
+
                 }
-                // Printing for every cart item
-                Console.WriteLine("CartItem Id: " + order.CartItemId +
-                    "\n" + "Product name: " + order.CartItem.product.Name + " " + order.CartItem.ProductAmount + "x" +
-                    "\n" + "Price: " + order.ItemPrice + " SEK");
+                Console.WriteLine("\nSubTotal for products: "+ subTotal.ToString("N2") + " SEK");
+                Console.WriteLine("------------------------------------------------------------");
+                index++;
             }
-        }
-
-        private static void PrintSubtotal(IGrouping<DateTime, Order> group)
-        {
-            // Calculating the price for the Items in the group
-            double subTotal = group.Sum(g => g.ItemPrice);
-
-            Console.WriteLine();
-            Console.WriteLine("Total price for products: " + subTotal.ToString("N2"));
-            Console.WriteLine("----------------------------------");
+            return orderDateGroups;
         }
     }
 }

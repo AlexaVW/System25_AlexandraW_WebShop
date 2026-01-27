@@ -19,7 +19,7 @@ namespace Webshop.Connections
         {
             var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
 
-            var connStr = config["MySettings:ConnectionStringLocal"];
+            var connStr = config["MySettings:ConnectionStringAzure"];
             optionsBuilder.UseSqlServer(connStr);
         }
 

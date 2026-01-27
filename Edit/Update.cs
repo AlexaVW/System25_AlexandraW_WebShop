@@ -40,6 +40,7 @@ namespace Webshop.Edit
                     try
                     {
                         category.Name = newCategoryName;
+                        db.Update(category);
                         db.SaveChanges();
                     }
                     catch (Exception ex)
@@ -96,12 +97,14 @@ namespace Webshop.Edit
                     try
                     {
                         product.Name = newProductName;
+                        db.Update(product);
                         db.SaveChanges();
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine("Ops... Something went wrong");
                         Console.WriteLine(ex.Message);
+                        Console.ReadKey();
                     }
                 }
             }
@@ -123,12 +126,14 @@ namespace Webshop.Edit
                     try
                     {
                         product.PricePerUnit = newPricePerUnit;
+                        db.Update(product);
                         db.SaveChanges();
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine("Ops... Something went wrong");
                         Console.WriteLine(ex.Message);
+                        Console.ReadKey();
                     }
                 }
             }
@@ -147,12 +152,14 @@ namespace Webshop.Edit
                     try
                     {
                         product.UnitsInStock = newUnitsInStock;
+                        db.Update(product);
                         db.SaveChanges();
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine("Ops... Something went wrong");
                         Console.WriteLine(ex.Message);
+                        Console.ReadKey();
                     }
                 }
             }
@@ -172,13 +179,15 @@ namespace Webshop.Edit
                 {
                     try
                     {
-                        product.Name = newDescription;
+                        product.Description = newDescription;
+                        db.Update(product);
                         db.SaveChanges();
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine("Ops... Something went wrong");
                         Console.WriteLine(ex.Message);
+                        Console.ReadKey();
                     }
                 }
             }
@@ -197,13 +206,15 @@ namespace Webshop.Edit
                 {
                     try
                     {
-                        product.Name = newSupplier;
+                        product.Supplier = newSupplier;
+                        db.Update(product);
                         db.SaveChanges();
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine("Ops... Something went wrong");
                         Console.WriteLine(ex.Message);
+                        Console.ReadKey();
                     }
                 }
             }
@@ -235,6 +246,7 @@ namespace Webshop.Edit
                         }
 
                         product.IsOnSale = newIsOnSale;
+                        db.Update(product);
                         db.SaveChanges();
                     }
                     catch (Exception ex)
@@ -242,6 +254,7 @@ namespace Webshop.Edit
                         Console.WriteLine("Ops... Something went wrong");
                         Console.WriteLine("This Update won't be saved");
                         Console.WriteLine(ex.Message);
+                        Console.ReadKey();
                     }
                 }
             }
@@ -262,12 +275,14 @@ namespace Webshop.Edit
                     try
                     {
                         product.CategoryId = newCategoryId;
+                        db.Update(product);
                         db.SaveChanges();
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine("Ops... Something went wrong");
                         Console.WriteLine(ex.Message);
+                        Console.ReadKey();
                     }
                 }
             }
@@ -328,6 +343,9 @@ namespace Webshop.Edit
                             // Updating CustomerName for every order
                             order.CustomerName = newCustomerName;
                         }
+
+                        db.UpdateRange(orders);
+
                         db.SaveChanges();
                     }
                     catch (Exception ex)
@@ -353,7 +371,9 @@ namespace Webshop.Edit
                         foreach (var order in orders)
                         {
                             order.ShipAdress = newAddress;
+                            
                         }
+                        db.UpdateRange(orders);
                         db.SaveChanges();
                     }
                     catch (Exception ex)
@@ -381,6 +401,7 @@ namespace Webshop.Edit
                         {
                             order.ShipCountry = newCountry;
                         }
+                        db.UpdateRange(orders);
                         db.SaveChanges();
                     }
                     catch (Exception ex)
@@ -424,6 +445,7 @@ namespace Webshop.Edit
                     try
                     {
                         cartItem.ProductAmount += numberToIncrease;
+                        db.Update(cartItem);
                         db.SaveChanges();
                     }
                     catch (Exception ex)
@@ -448,6 +470,7 @@ namespace Webshop.Edit
                         {
                             db.CartItems.Remove(cartItem);
                         }
+                        db.Update(cartItem);
                         db.SaveChanges();
                     }
                     catch (Exception ex)
