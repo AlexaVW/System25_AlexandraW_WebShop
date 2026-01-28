@@ -32,9 +32,5 @@ namespace Webshop.Connections
                 .HasForeignKey(p => p.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
-
-
-
-
     }
 }

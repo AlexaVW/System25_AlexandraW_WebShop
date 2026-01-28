@@ -69,6 +69,7 @@ namespace Webshop.Edit
                 {
                     Console.WriteLine("Ops... Something went wrong");
                     Console.WriteLine(ex.Message);
+                    Console.ReadKey();
                 }
             }
         }
@@ -100,6 +101,7 @@ namespace Webshop.Edit
                 {
                     Console.WriteLine("Ops... Something went wrong");
                     Console.WriteLine(ex.Message);
+                    Console.ReadKey();
                 }
             }
         }

@@ -136,9 +136,8 @@ namespace Webshop.Edit
                     {
                         Console.WriteLine(item.CustomerName);
                         Console.WriteLine(item.ShipAdress);
-                        Console.WriteLine(item.ShipCountry);
-                        Console.WriteLine();
-                        firstRow = false;
+                        Console.WriteLine(item.ShipCountry + "\n");
+                        firstRow = false; 
                     }
                     // Printing for every cartitem
                     Console.WriteLine("Product: " + item.CartItem.product.Name +

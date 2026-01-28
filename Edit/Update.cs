@@ -47,6 +47,7 @@ namespace Webshop.Edit
                     {
                         Console.WriteLine("Ops... Something went wrong");
                         Console.WriteLine(ex.Message);
+                        Console.ReadKey();
                     }
                 }
             }
@@ -327,8 +328,7 @@ namespace Webshop.Edit
         {
             if (orders != null)
             {
-                Console.WriteLine();
-                Console.WriteLine("Press Enter to not change this column");
+                Console.WriteLine("\nPress Enter to not change this column");
                 Console.Write("Enter new customer name: ");
                 var newCustomerName = Console.ReadLine();
                 
@@ -352,6 +352,7 @@ namespace Webshop.Edit
                     {
                         Console.WriteLine("Ops... Something went wrong");
                         Console.WriteLine(ex.Message);
+                        Console.ReadKey();
                     }
                 }
             }
@@ -360,8 +361,7 @@ namespace Webshop.Edit
         {
             if (orders != null)
             {
-                Console.WriteLine();
-                Console.WriteLine("Press Enter to not change this column");
+                Console.WriteLine("\nPress Enter to not change this column");
                 Console.Write("Enter new address: ");
                 var newAddress = Console.ReadLine();
                 if (!string.IsNullOrEmpty(newAddress))
