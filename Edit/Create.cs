@@ -22,17 +22,20 @@ namespace Webshop.Edit
                 Console.WriteLine("Add a new category \n");
                 Console.Write("Enter category name: ");
                 string categoryName = Console.ReadLine();
-                try
+                if (!string.IsNullOrEmpty(categoryName))
                 {
-                    Category newCategory = new Category(categoryName);
-                    db.Categories.Add(newCategory);
-                    db.SaveChanges();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Ops... Something went wrong");
-                    Console.WriteLine(ex.Message);
-                    Console.ReadKey();
+                    try
+                    {
+                        Category newCategory = new Category(categoryName);
+                        db.Categories.Add(newCategory);
+                        db.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Ops... Something went wrong");
+                        Console.WriteLine(ex.Message);
+                        Console.ReadKey();
+                    }
                 }
             }
         }
@@ -48,8 +51,16 @@ namespace Webshop.Edit
 
                 Console.Write("Enter product name: ");
                 string productName = Console.ReadLine();
+                // If the string is empty - gets sent back to previous menu and has to start over
+                if (string.IsNullOrEmpty(productName))
+                {
+                    Console.WriteLine("Invalid input");
+                    Console.ReadKey();
+                    Console.Clear();
+                    return;
+                }
 
-                Console.Write("Enter product price: ");
+                    Console.Write("Enter product price: ");
                 // If invalid input = returns 0
                 bool validPriceInput = double.TryParse(Console.ReadLine(), out double pricePerUnit);
 
@@ -58,9 +69,23 @@ namespace Webshop.Edit
 
                 Console.Write("Enter a description: ");
                 string description = Console.ReadLine();
+                if (string.IsNullOrEmpty(description))
+                {
+                    Console.WriteLine("Invalid input");
+                    Console.ReadKey();
+                    Console.Clear();
+                    return;
+                }
 
                 Console.Write("Enter the name of the supplier: ");
                 string supplier = Console.ReadLine();
+                if (string.IsNullOrEmpty(supplier))
+                {
+                    Console.WriteLine("Invalid input");
+                    Console.ReadKey();
+                    Console.Clear();
+                    return;
+                }
 
                 Console.Write("Is the product on sale? 1 = Yes. | 2 = No: ");
                 bool isOnSale = false;
@@ -147,12 +172,33 @@ namespace Webshop.Edit
             {
                 Console.Write("Name: ");
                 name = Console.ReadLine();
+                if (string.IsNullOrEmpty(name))
+                {
+                    Console.WriteLine("Invalid input");
+                    Console.ReadKey();
+                    Console.Clear();
+                    return;
+                }
 
                 Console.Write("Address: ");
                 address = Console.ReadLine();
+                if (string.IsNullOrEmpty(address))
+                {
+                    Console.WriteLine("Invalid input");
+                    Console.ReadKey();
+                    Console.Clear();
+                    return;
+                }
 
                 Console.Write("Country: ");
                 country = Console.ReadLine();
+                if (string.IsNullOrEmpty(country))
+                {
+                    Console.WriteLine("Invalid input");
+                    Console.ReadKey();
+                    Console.Clear();
+                    return;
+                }
 
                 Console.WriteLine();
                 Console.WriteLine("Choose shipping method");
@@ -239,7 +285,7 @@ namespace Webshop.Edit
         private static void ShowFinalPrice(int shippingCost, double totalPriceWithShipping)
         {
             Console.WriteLine("Shipping cost: " + shippingCost + " SEK");
-            Console.WriteLine("Including tax: " + Helpers.CalculateTax(totalPriceWithShipping) + " SEK");
+            Console.WriteLine("Including tax: " + Helpers.CalculateTax(totalPriceWithShipping).ToString("N2") + " SEK");
             Console.WriteLine("Subtotal: " + totalPriceWithShipping.ToString("N2") + " SEK");
         }
 

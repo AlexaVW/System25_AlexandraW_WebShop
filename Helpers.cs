@@ -113,5 +113,18 @@ namespace Webshop
             }
             return cartItemsNotPaid;
         }
+
+        public static List<Category> GetCategories()
+        {
+            List<Category> categories = new List<Category>();
+            using(var db = new WebShopDbContext())
+            {
+                foreach(var category in db.Categories)
+                {
+                    categories.Add(category);
+                }
+            }
+            return categories;
+        }
     }
 }

@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Webshop.Connections;
 using Webshop.Edit;
 using Webshop.Menus;
-using Webshop.Connections;
+using Webshop.Models;
 
 namespace Webshop.Pages
 {
@@ -16,33 +17,40 @@ namespace Webshop.Pages
             bool isRunning = true;
             while (isRunning)
             {
-                ShoppingPageMenu();
-                ConsoleKeyInfo key = Console.ReadKey(true);
-                Console.Clear();
-                switch (key.KeyChar) 
+                using (var db = new WebShopDbContext())
                 {
-                    case '1':
-                        // Selecting categoryId to see the products in that category
-                        WindowStructure.CategoryPage(Helpers.GetCategoryProducts(1)); // Food
-                        break;
-                    case '2':
-                        WindowStructure.CategoryPage(Helpers.GetCategoryProducts(2)); // Treats
-                        break;
-                    case '3':
-                        WindowStructure.CategoryPage(Helpers.GetCategoryProducts(3)); // Toys
-                        break;
-                    case '4':
-                        WindowStructure.CategoryPage(Helpers.GetCategoryProducts(4)); // Accessories
-                        break;
-                    case '5':
-                        SearchPage.SearchProduct();
-                        break;
-                    case '8':
-                        isRunning = false;
-                        break;
-                    case '9':
-                        Environment.Exit(0);
-                        break;
+                    Read.ShowCategories(db);
+                    ShoppingPageMenu();
+                    
+                    ConsoleKeyInfo key = Console.ReadKey(true);
+                    string input = key.KeyChar.ToString().ToUpper();
+
+                    bool validInput = int.TryParse(input, out int selectedId);
+                    var selectedCategory = (from c in db.Categories
+                                            where c.Id == selectedId
+                                            select c).SingleOrDefault();
+                    Console.Clear();
+                    // If the input is a categoryId
+                    if (selectedCategory != null)
+                    {
+                        WindowStructure.CategoryPage(Helpers.GetCategoryProducts(selectedId));
+                    }
+                    else
+                    {
+                        // If the input is not an int
+                        switch (input)
+                        {
+                            case "Q":
+                                SearchPage.SearchProduct();
+                                break;
+                            case "W":
+                                isRunning = false;
+                                break;
+                            case "E":
+                                Environment.Exit(0);
+                                break;
+                        }
+                    }
                 }
                 Console.Clear();
             }
@@ -93,14 +101,9 @@ namespace Webshop.Pages
         
         public static void ShoppingPageMenu()
         {
-            Console.WriteLine("Categories");
-            Console.WriteLine("[1] Food");
-            Console.WriteLine("[2] Treats");
-            Console.WriteLine("[3] Toys");
-            Console.WriteLine("[4] Accessories");
-            Console.WriteLine("[5] Search");
-            Console.WriteLine("[8] Go Back");
-            Console.WriteLine("[9] Exit");
+            Console.WriteLine("[Q] Search");
+            Console.WriteLine("[W] Go Back");
+            Console.WriteLine("[E] Exit");
         }
         public static void CartPageMenu()
         {

@@ -380,17 +380,16 @@ namespace Webshop.Edit
                     {
                         Console.WriteLine("Ops... Something went wrong");
                         Console.WriteLine(ex.Message);
+                        Console.ReadKey();
                     }
                 }
-
             }
         }
         private static void UpdateCustomerCountry(List<Order> orders, WebShopDbContext db)
         {
             if (orders != null)
             {
-                Console.WriteLine();
-                Console.WriteLine("Press Enter to not change this column");
+                Console.WriteLine("\nPress Enter to not change this column");
                 Console.Write("Enter new country: ");
                 var newCountry = Console.ReadLine();
                 if (!string.IsNullOrEmpty(newCountry))
@@ -408,6 +407,7 @@ namespace Webshop.Edit
                     {
                         Console.WriteLine("Ops... Something went wrong");
                         Console.WriteLine(ex.Message);
+                        Console.ReadKey();
                     }
                 }
             }
@@ -452,6 +452,7 @@ namespace Webshop.Edit
                     {
                         Console.WriteLine("Ops... Something went wrong");
                         Console.WriteLine(ex.Message);
+                        Console.ReadKey();
                     }
 
                 }
@@ -477,6 +478,7 @@ namespace Webshop.Edit
                     {
                         Console.WriteLine("Ops... Something went wrong");
                         Console.WriteLine(ex.Message);
+                        Console.ReadKey();
                     }
                 }
             }
